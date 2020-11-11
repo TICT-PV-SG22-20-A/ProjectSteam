@@ -3,7 +3,6 @@ import tkinter
 from operator import itemgetter
 
 
-#test
 
 
 steam_data = open('steam_data.json','r')
