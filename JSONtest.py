@@ -79,7 +79,7 @@ def fill_dashboard():
         ten_first_names = ten_first_names + (steam_data_dict[x]['name']) + '\n'
 
     tkinter.Label(box1, text = ten_first_names,font = 'Arial 12',bg = background_color, fg ='white').place(x=25,y=0)
-    tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 5, y = 5)
+    tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 10, y = 10)
 
 
     root.mainloop() # als ik de mainloop start buiten de functie waar het logo wordt geplaatst, dan laadt het niet.
