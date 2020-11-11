@@ -1,19 +1,25 @@
 import json
 import tkinter
+from operator import itemgetter
+
 
 
 steam_data = open('steam_data.json','r')
 
 
-def convert_to_dict(data):
-    'converts the raw JSON file to a python dictionary'
+def convert_to_list(data):
+    'converts the raw JSON file to a list of dictionaries'
 
     data = (data.read())
-    data_dict = json.loads(data)
+    data_list = json.loads(data)
 
-    return data_dict
+    return data_list
 
+def sort_list_alphabetically(list):
+    'returns the list sorted on the name of keys alphabetically'
 
+    sortedList = sorted(list, key= itemgetter('name'))
+    return sortedList
 
 def create_dashboard():
     'create the dashboard'
@@ -62,34 +68,28 @@ def create_dashboard():
 
 
 
-
-def fill_dashboard():
+def fill_dashboard(list):
     'add a logo and text to the dashboard'
 
 
     background_color = '#1B3E54'
     steamlogo = tkinter.PhotoImage(file = 'steam.png')
 
-
-    steam_data_dict = convert_to_dict(steam_data)
-
     ten_first_names = '\n\nFirst 10 games in the JSON file: \n\n\n\n\n\n'
 
     for x in range(10):
-        ten_first_names = ten_first_names + (steam_data_dict[x]['name']) + '\n'
+        ten_first_names = ten_first_names + (list[x]['name']) + '\n'
 
     tkinter.Label(box1, text = ten_first_names,font = 'Arial 12',bg = background_color, fg ='white').place(x=25,y=0)
     tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 10, y = 10)
 
 
-    root.mainloop() # als ik de mainloop start buiten de functie waar het logo wordt geplaatst, dan laadt het niet.
-
-
-
+    root.mainloop() # als ik de mainloop start buiten de functie waar het logo wordt geplaatst, dan laadt het logo niet.
 
 
 
 
 
 create_dashboard()
-fill_dashboard()
+fill_dashboard(convert_to_list(steam_data))
+
