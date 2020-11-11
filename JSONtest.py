@@ -6,6 +6,7 @@ steam_data = open('steam_data.json','r')
 
 
 def convert_to_dict(data):
+    'converts the raw JSON file to a python dictionary'
 
     data = (data.read())
     data_dict = json.loads(data)
@@ -13,10 +14,24 @@ def convert_to_dict(data):
     return data_dict
 
 
+
 def create_dashboard():
+    'create the dashboard'
+
+    global root # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
     root = tkinter.Tk()
     root.geometry('1000x1000')
     root.title('SteamStats')
+    root.overrideredirect(True) # haalt de titlebar weg, nodig voor een overlay denk ik
+
+    windowWidth = root.winfo_reqwidth()
+    windowHeight = root.winfo_reqheight()
+
+    positionRight = int(root.winfo_screenwidth() / 2 - windowWidth*2.5)
+    positionDown = int(root.winfo_screenheight() / 2 - windowHeight * 2.5)
+
+    root.geometry("+{}+{}".format(positionRight, positionDown))
+
 
     bar_color = '#171A21'
     menu_bar_color = '#3e7ea7'
@@ -24,16 +39,37 @@ def create_dashboard():
     box_color = '#4E6A84'
     background_color2 = '#29455B'
 
-    steamlogo = tkinter.PhotoImage(file = 'steam.png')
-
     bar = tkinter.Label(root,height = 5,width = 400, bg = bar_color)
     bar.grid(row = 1, column =1, columnspan = 2,sticky = 'w')
+
+    global box1 # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
+
     box1 = tkinter.Label(root,width = 40,anchor = 'n', height = 30,fg = 'white', bg = background_color)
     box1.grid(row = 2, column = 1)
-    tkinter.Label(root, width = 400, height = 30, bg = background_color2).grid(row = 2, column = 2)
-    tkinter.Label(root, width = 40, height = 40, bg = menu_bar_color).grid(row = 3, column = 1)
-    tkinter.Label(root, width = 400, height = 40, bg = box_color).grid(row = 3, column = 2)
-    tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 5, y = 5)
+    box2 = tkinter.Label(root, width = 400, height = 30, bg = background_color2)
+    box2.grid(row = 2, column = 2)
+    box3 = tkinter.Label(root, width = 40, height = 40, bg = menu_bar_color)
+    box3.grid(row = 3, column = 1)
+    box4 = tkinter.Label(root, width = 400, height = 40, bg = box_color)
+    box4.grid(row = 3, column = 2)
+
+    def terminate_window():
+        root.destroy()
+
+    tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 975, y = 0)
+
+
+
+
+
+
+def fill_dashboard():
+    'add a logo and text to the dashboard'
+
+
+    background_color = '#1B3E54'
+    steamlogo = tkinter.PhotoImage(file = 'steam.png')
+
 
     steam_data_dict = convert_to_dict(steam_data)
 
@@ -42,16 +78,18 @@ def create_dashboard():
     for x in range(10):
         ten_first_names = ten_first_names + (steam_data_dict[x]['name']) + '\n'
 
-    tkinter.Label(box1, text = ten_first_names,font = 'Motiva-Sans 12',bg = background_color, fg ='white').place(x=25,y=0)
+    tkinter.Label(box1, text = ten_first_names,font = 'Arial 12',bg = background_color, fg ='white').place(x=25,y=0)
+    tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 5, y = 5)
+
+
+    root.mainloop() # als ik de mainloop start buiten de functie waar het logo wordt geplaatst, dan laadt het niet.
 
 
 
-
-
-    root.mainloop()
 
 
 
 
 
 create_dashboard()
+fill_dashboard()
