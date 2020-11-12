@@ -19,8 +19,8 @@ def convert_to_list(data):
 def sort_list_alphabetically(list):
     'returns the list sorted on the name of keys alphabetically'
 
-    sortedList = sorted(list, key= itemgetter('name'))
-    return sortedList
+    sorted_list = sorted(list, key= itemgetter('name'))
+    return sorted_list
 
 def create_dashboard():
     'create the dashboard'
