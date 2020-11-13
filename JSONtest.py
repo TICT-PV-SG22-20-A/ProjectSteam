@@ -29,7 +29,7 @@ def create_dashboard():
     root = tkinter.Tk()
     root.geometry('1000x1000')
     root.title('SteamStats')
-    root.overrideredirect(True) # haalt de titlebar weg, nodig voor een overlay denk ik
+    root.overrideredirect(True) # haalt de titlebar weg, nodig als je een overlay wilt maken
 
     windowWidth = root.winfo_reqwidth()
     windowHeight = root.winfo_reqheight()
@@ -60,6 +60,7 @@ def create_dashboard():
     box4 = tkinter.Label(root, width = 400, height = 40, bg = box_color)
     box4.grid(row = 3, column = 2)
 
+
     def terminate_window():
         root.destroy()
 
@@ -67,14 +68,15 @@ def create_dashboard():
 
 
 
-
-
 def fill_dashboard(list):
     'add a logo and text to the dashboard'
 
+    global steamlogo # als ik dit logo niet global maak dan laadt hij niet bij het runnen van de mainloop
+    steamlogo = tkinter.PhotoImage(file='steam.png')
+
+    tkinter.Label(root, image=steamlogo, border=0).place(x=10, y=10)
 
     background_color = '#1B3E54'
-    steamlogo = tkinter.PhotoImage(file = 'steam.png')
 
     ten_first_names = '\n\nFirst 10 games in the JSON file: \n\n\n\n\n\n'
 
@@ -82,10 +84,11 @@ def fill_dashboard(list):
         ten_first_names = ten_first_names + (list[x]['name']) + '\n'
 
     tkinter.Label(box1, text = ten_first_names,font = 'Arial 12',bg = background_color, fg ='white').place(x=25,y=0)
-    tkinter.Label(root, image = steamlogo, border = 0 ).place(x = 10, y = 10)
 
 
-    root.mainloop() # als ik de mainloop start buiten de functie waar het logo wordt geplaatst, dan laadt het logo niet.
+
+def launch_dashboard():
+    root.mainloop()
 
 
 
@@ -93,4 +96,5 @@ def fill_dashboard(list):
 
 create_dashboard()
 fill_dashboard(convert_to_list(steam_data))
+launch_dashboard()
 
