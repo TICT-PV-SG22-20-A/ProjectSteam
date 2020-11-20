@@ -75,12 +75,30 @@ def create_dashboard():
 
     tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 1380, y = 0)
 
-print()
 
 def fill_dashboard(list):
     'add data to the dashboard'
+    print(list[12312])
+
+
+    def get_average_playtime_piechart(limit):
+        name = 'Highest average game time'
+        playtime_dict = {}
+        for entry in list:
+            if (int(entry['positive_ratings']) + int(entry['negative_ratings']) > 1000):
+                playtime_dict[entry['name']] = entry['average_playtime']
+
+        playtime_dict = sorted(playtime_dict.items(), key=itemgetter(1))
+        playtime_dict.reverse()
+
+        playtime_dict = playtime_dict[:limit]
+
+        make_piechart(playtime_dict,name)
+
 
     def get_genre_piechart(limit):
+        name = 'Steam Genre distribution'
+
         genre_tags = []
         for entry in list:
             tags = (entry['steamspy_tags'].split(';'))
@@ -96,15 +114,19 @@ def fill_dashboard(list):
 
         genre_tags_list = genre_tags_list[:limit]
 
-        tags = []
-        count = []
 
-        for entry in genre_tags_list:
-            tags.append(entry[0])
-            count.append(entry[1])
 
-        labels = tags
-        sizes = count
+        make_piechart(genre_tags_list,name)
+
+    def make_piechart(dict,name):
+
+        labels = []
+        sizes = []
+
+        for entry in dict:
+            labels.append(entry[0])
+            sizes.append(entry[1])
+
 
         fig1, ax1 = plt.subplots()
 
@@ -112,28 +134,47 @@ def fill_dashboard(list):
         fig = plt.gcf()
         fig.gca().add_artist(centre_circle)
 
-        def make_autopct():
-            def my_autopct(pct):
-                total = sum(sizes)
-                val = int(round(pct * total / 100.0))
-                return '{p:.0f}%\n({v:d})'.format(p=pct, v=val)
+        colors = ['#171A21', '#3e7ea7', '#1B3E54', '#4E6A84', '#29455B', 'grey']
 
-            return my_autopct
+        if len(labels) == 3:
+            explode = (0.05, 0.05, 0.05)
 
-        colors = ['#171A21', '#3e7ea7', '#1B3E54', '#4E6A84','#29455B', 'grey']
-
-
+        if len(labels) == 5:
+            explode = (0.05, 0.05, 0.05, 0.05, 0.05)
+        if len(labels) == 8:
+            explode = (0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
 
 
-        ax1.pie(sizes, labels=labels, autopct=make_autopct(),
-                shadow=True, startangle=90, colors = colors)
+        if(name =='Highest average game time'):
+            for x in range(len(sizes)):
+                sizes[x] = int(sizes[x]/60)
+
+            def make_autopct(values):
+                def my_autopct(pct):
+                    total = sum(values)
+                    val = int(round(pct * total / 100.0))
+                    return '{v:d}h'.format(p=pct, v=val)
+
+                return my_autopct
+
+            patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct=make_autopct(sizes),
+                                                startangle=90,
+                                                pctdistance=0.85, explode=explode)
+        else:
+            patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct= '%1.1f%%',
+                                                startangle=90,
+                                                pctdistance=0.85, explode=explode)
+
+        for text in texts:
+            text.set_color('black')
+        for autotext in autotexts:
+            autotext.set_color('white')
+
         ax1.axis('equal')
-        plt.title(f"Steam genre distribution ",
-                  bbox={'facecolor': '0.8', 'pad': 3}, loc='left')
-
         plt.savefig('piechart.png')
+        plt.show()
 
-    get_genre_piechart(5)
+
     global steamlogo # als ik dit logo niet global maak dan laadt hij niet bij het runnen van de mainloop
     global dislikeIcon
     global likeIcon
@@ -239,8 +280,45 @@ def fill_dashboard(list):
     tkinter.Button(box3,width =5,height = 1, command = refresh_rated_games, text = 'reload').place(x = 320, y = 237)
 
 
-    tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 30).pack()
+    pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 30)
+    pieChartImage.pack()
     tkinter.Label(box1, text = ten_first_names,font='Arial 12', bg=background_color, fg='white').place(x=180,y=70)
+
+    set1 = tkinter.StringVar()
+    set1.set(5)
+
+    tkinter.Radiobutton(box2, text='3', variable=set1, value=3).place(x = 50, y =400)
+    tkinter.Radiobutton(box2,text='5', variable=set1, value=5).place(x = 50, y =420)
+    tkinter.Radiobutton(box2, text='8', variable=set1, value=8).place(x = 50, y =440)
+
+    def update_pie_info():
+
+        chartName = tkvar.get()
+
+        pie_limit = int(set1.get())
+
+        if(chartName == 'Steam genre distribution'):
+            get_genre_piechart(pie_limit)
+        if(chartName == 'Highest average playtime'):
+            get_average_playtime_piechart(pie_limit)
+        global pieChart
+        pieChart = tkinter.PhotoImage(file='piechart.png')
+        pieChartImage.config(image = pieChart)
+
+
+
+    tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6).place(x=50,y=470)
+
+
+
+    options = ['Steam genre distribution', 'Highest average playtime']
+
+    tkvar = tkinter.StringVar(box2)
+    tkvar.set(options[0])
+
+    menu = tkinter.OptionMenu(box2, tkvar, *options)
+    menu.place(x=60,y=50)
+
 
 
 
