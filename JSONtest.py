@@ -71,6 +71,7 @@ def create_dashboard():
 
 
     def terminate_window():
+        'sluit het window'
         root.destroy()
 
     tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 1380, y = 0)
@@ -82,6 +83,7 @@ def fill_dashboard(list):
 
 
     def get_average_playtime_piechart(limit):
+        'maak een average playtime piechart'
         name = 'Highest average game time'
         playtime_dict = {}
         for entry in list:
@@ -97,6 +99,7 @@ def fill_dashboard(list):
 
 
     def get_genre_piechart(limit):
+        'maak een genre distributie piechart'
         name = 'Steam Genre distribution'
 
         genre_tags = []
@@ -119,6 +122,7 @@ def fill_dashboard(list):
         make_piechart(genre_tags_list,name)
 
     def make_piechart(dict,name):
+        'maak de piechart image'
 
         labels = []
         sizes = []
@@ -292,6 +296,7 @@ def fill_dashboard(list):
     tkinter.Radiobutton(box2, text='8', variable=set1, value=8).place(x = 50, y =440)
 
     def update_pie_info():
+        'refresh de piechart'
 
         chartName = tkvar.get()
 
@@ -323,6 +328,7 @@ def fill_dashboard(list):
 
 
 def launch_dashboard():
+    'launch dashboard'
     root.mainloop()
 
 
