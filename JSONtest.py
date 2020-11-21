@@ -33,7 +33,7 @@ def create_dashboard():
 
     global root # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
     root = tkinter.Tk()
-    root.geometry('1400x1200')
+    root.geometry('1400x1000')
     root.title('SteamStats')
     root.overrideredirect(True) # haalt de titlebar weg, nodig als je een overlay wilt maken
     #root.attributes('-fullscreen', True)
@@ -61,11 +61,11 @@ def create_dashboard():
     box1.grid(row = 2, column = 1)
     box2 = tkinter.Frame(root, width = 800, height = 600, bg = background_color2)
     box2.grid(row = 2, column = 2, columnspan = 2)
-    box3 = tkinter.Frame(root, width = 600, height = 700, bg = background_color)
+    box3 = tkinter.Frame(root, width = 600, height = 400, bg = background_color)
     box3.grid(row = 3, column = 1)
-    box4 = tkinter.Frame(root, width = 400, height = 700, bg = box_color)
+    box4 = tkinter.Frame(root, width = 400, height = 400, bg = box_color)
     box4.grid(row = 3, column = 2)
-    box5 = tkinter.Frame(root, width=400, height=700, bg=menu_bar_color, )
+    box5 = tkinter.Frame(root, width=400, height=400, bg=menu_bar_color, )
     box5.grid(row=3, column=3)
 
 
@@ -140,13 +140,10 @@ def fill_dashboard(list):
 
         colors = ['#171A21', '#3e7ea7', '#1B3E54', '#4E6A84', '#29455B', 'grey']
 
-        if len(labels) == 3:
-            explode = (0.05, 0.05, 0.05)
+        explode = []
 
-        if len(labels) == 5:
-            explode = (0.05, 0.05, 0.05, 0.05, 0.05)
-        if len(labels) == 8:
-            explode = (0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
+        for x in range(len(labels)):
+            explode.append(0.05)
 
 
         if(name =='Highest average game time'):
