@@ -33,13 +33,10 @@ def create_dashboard():
 
     global root # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
     root = tkinter.Tk()
-    root.geometry('1400x1000')
+    root.geometry('1140x960')
     root.title('SteamStats')
     root.overrideredirect(True) # haalt de titlebar weg, nodig als je een overlay wilt maken
-    #root.attributes('-fullscreen', True)
 
-    windowWidth = root.winfo_reqwidth()
-    windowHeight = root.winfo_reqheight()
 
     root.update()
 
@@ -49,7 +46,7 @@ def create_dashboard():
     root.geometry("+{}+{}".format(positionRight, positionDown))
 
 
-    bar = tkinter.Frame(root,height = 80,width = 1400, bg = bar_color)
+    bar = tkinter.Frame(root,height = 80,width = 1140, bg = bar_color)
     bar.grid(row = 1, column =1, columnspan = 3)
 
     global box1 # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
@@ -57,15 +54,15 @@ def create_dashboard():
     global box3
     global box4
     global box5
-    box1 = tkinter.Frame(root,width = 600, height = 600, bg = background_color)
+    box1 = tkinter.Frame(root,width = 500, height = 480, bg = background_color)
     box1.grid(row = 2, column = 1)
-    box2 = tkinter.Frame(root, width = 800, height = 600, bg = background_color2)
+    box2 = tkinter.Frame(root, width = 640, height = 480, bg = background_color2)
     box2.grid(row = 2, column = 2, columnspan = 2)
-    box3 = tkinter.Frame(root, width = 600, height = 400, bg = background_color)
+    box3 = tkinter.Frame(root, width = 500, height = 400, bg = background_color)
     box3.grid(row = 3, column = 1)
-    box4 = tkinter.Frame(root, width = 400, height = 400, bg = box_color)
+    box4 = tkinter.Frame(root, width = 320, height = 400, bg = box_color)
     box4.grid(row = 3, column = 2)
-    box5 = tkinter.Frame(root, width=400, height=400, bg=menu_bar_color, )
+    box5 = tkinter.Frame(root, width=320, height=400, bg=menu_bar_color, )
     box5.grid(row=3, column=3)
 
 
@@ -74,7 +71,7 @@ def create_dashboard():
         'sluit het window'
         root.destroy()
 
-    tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 1380, y = 0)
+    tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 1120, y = 0)
 
 
 def fill_dashboard(list):
@@ -134,11 +131,19 @@ def fill_dashboard(list):
 
         fig1, ax1 = plt.subplots()
 
-        centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+        centre_circle = plt.Circle((0, 0), 0.70, fc='#29455B')
         fig = plt.gcf()
         fig.gca().add_artist(centre_circle)
 
-        colors = ['#171A21', '#3e7ea7', '#1B3E54', '#4E6A84', '#29455B', 'grey']
+        fig.set_facecolor('#29455B')
+
+        colors = ['#222630','#171A21', '#3e7ea7', '#1B3E54', '#4E6A84','#aed6f5']
+
+        bar_color = '#171A21'
+        menu_bar_color = '#3e7ea7'
+        background_color = '#1B3E54'
+        box_color = '#4E6A84'
+        background_color2 = '#29455B'
 
         explode = []
 
@@ -167,9 +172,10 @@ def fill_dashboard(list):
                                                 pctdistance=0.85, explode=explode)
 
         for text in texts:
-            text.set_color('black')
+            text.set_color('white')
         for autotext in autotexts:
             autotext.set_color('white')
+
 
         ax1.axis('equal')
         plt.savefig('piechart.png')
@@ -236,8 +242,8 @@ def fill_dashboard(list):
     global lowest_rated_textbox
 
 
-    lowest_rated_textbox = tkinter.Text(box5, height=28, width=43, bg=menu_bar_color, fg='white', font='Arial 12', wrap='word')
-    lowest_rated_textbox.place(x=5, y=6)
+    lowest_rated_textbox = tkinter.Text(box5, height=21, width=34, bg=menu_bar_color, fg='white', font='Arial 12', wrap='word')
+    lowest_rated_textbox.place(x=5, y=9)
     lowest_rated_textbox.tag_configure("center", justify='center')
     lowest_rated_textbox.insert(tkinter.END, get_lowest_rated_games(50000), 'center')
 
@@ -269,35 +275,47 @@ def fill_dashboard(list):
 
     global top_rated_textbox
 
-    top_rated_textbox = tkinter.Text(box4, height = 28, width = 43, bg = box_color, fg = 'white',font='Arial 12', wrap = 'word')
-    top_rated_textbox.place(x = 5, y = 6)
+    top_rated_textbox = tkinter.Text(box4, height = 21, width = 34, bg = box_color, fg = 'white',font='Arial 12', wrap = 'word')
+    top_rated_textbox.place(x = 5, y = 9)
     top_rated_textbox.tag_configure("center", justify='center')
     top_rated_textbox.insert(tkinter.END, get_top_rated_games(50000), 'center')
 
 
     rated_games_entry = tkinter.Entry(box3, width=10)
-    rated_games_entry.place(x=230, y=240)
-    tkinter.Label(box3, text = 'Minimum amount of ratings:', bg = background_color, fg = 'white').place(x =220, y =200)
-    tkinter.Button(box3,width =5,height = 1, command = refresh_rated_games, text = 'reload').place(x = 320, y = 237)
+    rated_games_entry.insert(0,50000)
+    rated_games_entry.place(x=190, y=240)
+    tkinter.Label(box3, text = 'Minimum amount of ratings:', bg = background_color, fg = 'white').place(x =175, y =200)
+    tkinter.Button(box3,width =5,height = 1, command = refresh_rated_games, text = 'reload').place(x = 270, y = 237)
 
 
-    pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 30)
+    pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 0)
     pieChartImage.pack()
-    tkinter.Label(box1, text = ten_first_names,font='Arial 12', bg=background_color, fg='white').place(x=180,y=70)
+    tkinter.Label(box1, text = ten_first_names,font='Arial 12', bg=background_color, fg='white').place(x=132,y=70)
 
-    set1 = tkinter.StringVar()
-    set1.set(5)
 
-    tkinter.Radiobutton(box2, text='3', variable=set1, value=3).place(x = 50, y =400)
-    tkinter.Radiobutton(box2,text='5', variable=set1, value=5).place(x = 50, y =420)
-    tkinter.Radiobutton(box2, text='8', variable=set1, value=8).place(x = 50, y =440)
+
+
+    limit_box = tkinter.Entry(box2, bd = 2, width = 2, bg = background_color, fg = 'white')
+    limit_box.place(x=180,y=6)
+    limit_box.insert(0,5)
+
 
     def update_pie_info():
         'refresh de piechart'
 
         chartName = tkvar.get()
 
-        pie_limit = int(set1.get())
+        pie_limit = limit_box.get()
+
+        try:
+            pie_limit = int(pie_limit)
+        except:
+            pie_limit = int(5)
+
+        if(pie_limit < 1):
+            pie_limit = int(5)
+
+
 
         if(chartName == 'Steam genre distribution'):
             get_genre_piechart(pie_limit)
@@ -309,7 +327,7 @@ def fill_dashboard(list):
 
 
 
-    tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6).place(x=50,y=470)
+    tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6,bg = background_color, fg = 'white').place(x=3,y=450)
 
 
 
@@ -319,7 +337,10 @@ def fill_dashboard(list):
     tkvar.set(options[0])
 
     menu = tkinter.OptionMenu(box2, tkvar, *options)
-    menu.place(x=60,y=50)
+    menu.config(bg=background_color, fg = 'white', activebackground = background_color2, activeforeground = 'white')
+    menu["menu"].config(bg=background_color, fg = 'white', borderwidth = 0, activebackground = background_color2,activeforeground = 'white')
+    menu["highlightthickness"] = 0
+    menu.place(x=3,y=3)
 
 
 
