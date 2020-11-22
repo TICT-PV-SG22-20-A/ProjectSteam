@@ -354,11 +354,11 @@ def fill_dashboard(list):
     top_rated_textbox.insert(tkinter.END, get_top_rated_games(50000), 'center')
 
 
-    rated_games_entry = tkinter.Entry(box3, width=10)
+    rated_games_entry = tkinter.Entry(box3, width=10, bg = background_color, fg = 'white')
     rated_games_entry.insert(0,50000)
     rated_games_entry.place(x=190, y=240)
     tkinter.Label(box3, text = 'Minimum amount of ratings:', bg = background_color, fg = 'white').place(x =175, y =200)
-    tkinter.Button(box3,width =5,height = 1, command = refresh_rated_games, text = 'reload').place(x = 270, y = 237)
+    tkinter.Button(box3,width =5,height = 1,bg = background_color2,fg = 'white', command = refresh_rated_games, text = 'reload').place(x = 270, y = 237)
 
 
     pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 0)
@@ -388,7 +388,7 @@ def fill_dashboard(list):
 
         if(chartName == 'Game Releases per Year (2019&2020 excluded)'):
             make_bar_plot_release_year()
-        if(chartName == 'Game Popularity Distribution          '):
+        if(chartName == 'Game Playerbase Distribution          '):
             make_bar_plot_game_population()
         if(chartName == 'Genre Popularity Distribution'):
             get_genre_piechart(pie_limit)
@@ -405,7 +405,7 @@ def fill_dashboard(list):
 
 
 
-    options = ['Genre Popularity Distribution','Game Popularity Distribution          ', 'Highest Average Playtime', 'Game Releases per Year (2019&2020 excluded)']
+    options = ['Genre Popularity Distribution','Game Playerbase Distribution          ', 'Highest Average Playtime', 'Game Releases per Year (2019&2020 excluded)']
 
     tkvar = tkinter.StringVar(box2)
     tkvar.set(options[0])
