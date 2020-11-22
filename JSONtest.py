@@ -75,7 +75,40 @@ def create_dashboard():
 def fill_dashboard(list):
     'add data to the dashboard'
 
-    def make_bar_plot():
+    def make_bar_plot_release_year():
+        release_dates = []
+        for x in range(len(list)):
+            release_dates.append(list[x]['release_date'].split('-')[0])
+
+        unique_release_dates = []
+        for x in range(len(release_dates)):
+            if(release_dates[x]not in unique_release_dates):
+                unique_release_dates.append(release_dates[x])
+        unique_release_dates = sorted(unique_release_dates)
+
+        value_list = []
+        for x in range(len(unique_release_dates)):
+            value_list.append(release_dates.count(unique_release_dates[x]))
+
+        x = unique_release_dates[:-1]
+        values = value_list[:-1]
+
+        plt.figure(figsize=(6.4, 4.8))
+        plt.style.use('ggplot')
+        x_pos = [i for i, _ in enumerate(x)]
+        plt.bar(x_pos, values, color='#aed6f5')
+        plt.xlabel("")
+        plt.ylabel("Number of Games Released")
+        plt.xticks(rotation=45)
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+
+        plt.savefig('chart.png')
+
+    def make_bar_plot_game_population():
+
         amount_of_players_list = []
         for entry in list:
             amount_of_players_list.append(int(int((entry['owners'].split('-')[0]))/10000))
@@ -355,9 +388,10 @@ def fill_dashboard(list):
         if(pie_limit < 1):
             pie_limit = int(5)
 
-
+        if(chartName == 'Game releases per year (2019&2020 excluded)'):
+            make_bar_plot_release_year()
         if(chartName == 'Game popularity distribution  '):
-            make_bar_plot()
+            make_bar_plot_game_population()
         if(chartName == 'Steam genre distribution'):
             get_genre_piechart(pie_limit)
         if(chartName == 'Highest average playtime'):
@@ -372,7 +406,7 @@ def fill_dashboard(list):
 
 
 
-    options = ['Steam genre distribution', 'Highest average playtime', 'Game popularity distribution  ']
+    options = ['Steam genre distribution', 'Highest average playtime', 'Game popularity distribution  ', 'Game releases per year (2019&2020 excluded)']
 
     tkvar = tkinter.StringVar(box2)
     tkvar.set(options[0])
