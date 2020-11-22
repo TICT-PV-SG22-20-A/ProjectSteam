@@ -242,6 +242,7 @@ def fill_dashboard(list):
 
         fig.set_facecolor('#29455B')
 
+
         colors = ['#222630','#1f2947','#171A21', '#3e7ea7', '#1B3E54', '#4E6A84','#aed6f5']
 
         explode = []
@@ -269,7 +270,6 @@ def fill_dashboard(list):
             patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct= '%1.1f%%',
                                                 startangle=90,
                                                 pctdistance=0.85, explode=explode)
-
         for text in texts:
             text.set_color('white')
         for autotext in autotexts:
@@ -277,15 +277,19 @@ def fill_dashboard(list):
         ax1.axis('equal')
         plt.savefig('chart.png')
 
+
     global steamlogo
     global dislikeIcon
     global likeIcon
     global pieChart
+    global statsLogo
 
 
     steamlogo = tkinter.PhotoImage(file='steam.png')
+    statsLogo = tkinter.PhotoImage(file = 'stats.png')
     likeIcon = tkinter.PhotoImage(file = 'icon_thumbsUp.png')
     dislikeIcon = tkinter.PhotoImage(file ='icon_thumbsDown.png')
+
 
     try:
         pieChart = tkinter.PhotoImage(file='chart.png')
@@ -328,7 +332,7 @@ def fill_dashboard(list):
 
         sorted_ratings_list = sorted(ratings_dict.items(), key=itemgetter(1))
 
-        lowest_rated_games = '\n\nMost disliked steam games:\n\n\n'
+        lowest_rated_games = '\n\nLeast liked steam games:\n\n\n'
 
         for x in range(12):
             lowest_rated_games = lowest_rated_games + f'{sorted_ratings_list[x][0]} - {sorted_ratings_list[x][1]}%' + '\n'
@@ -336,6 +340,8 @@ def fill_dashboard(list):
         return lowest_rated_games
 
     tkinter.Label(root, image=steamlogo, border=0).place(x=10, y=10)
+    tkinter.Label(image = statsLogo, borderwidth = 0).place(y = 20, x = 200)
+
 
     ten_first_names = '\n\nFirst 10 games in the JSON file: \n\n\n\n'
 
@@ -461,5 +467,6 @@ def launch_dashboard():
 
 create_dashboard()
 fill_dashboard(convert_to_list(steam_data))
+
 launch_dashboard()
 
