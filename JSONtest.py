@@ -3,9 +3,6 @@ import tkinter
 from operator import itemgetter
 import matplotlib.pyplot as plt
 
-
-
-
 steam_data = open('steam_data.json','r')
 
 bar_color = '#171A21'
@@ -76,7 +73,7 @@ def create_dashboard():
 
 def fill_dashboard(list):
     'add data to the dashboard'
-    print(list[12312])
+
 
 
     def get_average_playtime_piechart(limit):
@@ -137,13 +134,7 @@ def fill_dashboard(list):
 
         fig.set_facecolor('#29455B')
 
-        colors = ['#222630','#171A21', '#3e7ea7', '#1B3E54', '#4E6A84','#aed6f5']
-
-        bar_color = '#171A21'
-        menu_bar_color = '#3e7ea7'
-        background_color = '#1B3E54'
-        box_color = '#4E6A84'
-        background_color2 = '#29455B'
+        colors = ['#222630','#1f2947','#171A21', '#3e7ea7', '#1B3E54', '#4E6A84','#aed6f5']
 
         explode = []
 
@@ -182,14 +173,22 @@ def fill_dashboard(list):
         plt.show()
 
 
-    global steamlogo # als ik dit logo niet global maak dan laadt hij niet bij het runnen van de mainloop
+    global steamlogo
     global dislikeIcon
     global likeIcon
     global pieChart
+
+
     steamlogo = tkinter.PhotoImage(file='steam.png')
     likeIcon = tkinter.PhotoImage(file = 'icon_thumbsUp.png')
     dislikeIcon = tkinter.PhotoImage(file ='icon_thumbsDown.png')
-    pieChart = tkinter.PhotoImage(file='piechart.png')
+
+    try:
+        pieChart = tkinter.PhotoImage(file='piechart.png')
+    except:
+        get_genre_piechart(5)
+        pieChart = tkinter.PhotoImage(file='piechart.png')
+
 
     def get_top_rated_games(ratings):
         'geeft een string van de hoogst beordeelde games terug'
@@ -342,6 +341,9 @@ def fill_dashboard(list):
     menu["highlightthickness"] = 0
     menu.place(x=3,y=3)
 
+
+    tkinter.Label(box4, image = likeIcon, borderwidth = 0).place(x =6,y = 10)
+    tkinter.Label(box5, image = dislikeIcon, borderwidth = 0).place(x =6,y = 10)
 
 
 
