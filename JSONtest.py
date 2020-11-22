@@ -151,7 +151,7 @@ def fill_dashboard(list):
 
     def get_average_playtime_piechart(limit):
         'maak een average playtime piechart'
-        name = 'Highest average game time'
+        name = 'Highest Average Playtime'
         playtime_dict = {}
         for entry in list:
             if (int(entry['positive_ratings']) + int(entry['negative_ratings']) > 1000):
@@ -167,7 +167,7 @@ def fill_dashboard(list):
 
     def get_genre_piechart(limit):
         'maak een genre distributie piechart'
-        name = 'Steam Genre distribution'
+        name = 'Genre Popularity Distribution'
 
         genre_tags = []
         for entry in list:
@@ -215,7 +215,7 @@ def fill_dashboard(list):
             explode.append(0.05)
 
 
-        if(name =='Highest average game time'):
+        if(name =='Highest Average Playtime'):
             for x in range(len(sizes)):
                 sizes[x] = int(sizes[x]/60)
 
@@ -368,9 +368,7 @@ def fill_dashboard(list):
 
 
 
-    limit_box = tkinter.Entry(box2, bd = 2, width = 2, bg = background_color, fg = 'white')
-    limit_box.place(x=180,y=6)
-    limit_box.insert(0,5)
+
 
 
     def update_pie_info():
@@ -388,32 +386,33 @@ def fill_dashboard(list):
         if(pie_limit < 1):
             pie_limit = int(5)
 
-        if(chartName == 'Game releases per year (2019&2020 excluded)'):
+        if(chartName == 'Game Releases per Year (2019&2020 excluded)'):
             make_bar_plot_release_year()
-        if(chartName == 'Game popularity distribution  '):
+        if(chartName == 'Game Popularity Distribution          '):
             make_bar_plot_game_population()
-        if(chartName == 'Steam genre distribution'):
+        if(chartName == 'Genre Popularity Distribution'):
             get_genre_piechart(pie_limit)
-        if(chartName == 'Highest average playtime'):
+        if(chartName == 'Highest Average Playtime'):
             get_average_playtime_piechart(pie_limit)
         global pieChart
         pieChart = tkinter.PhotoImage(file='chart.png')
         pieChartImage.config(image = pieChart)
 
+    limit_box = tkinter.Entry(box2, bd=2, width=2, bg=background_color2, fg='white')
+    limit_box.place(x=200, y=6)
+    limit_box.insert(0, 5)
+    tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6,bg = background_color2, fg = 'white').place(x=3,y=450)
 
 
-    tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6,bg = background_color, fg = 'white').place(x=3,y=450)
 
-
-
-    options = ['Steam genre distribution', 'Highest average playtime', 'Game popularity distribution  ', 'Game releases per year (2019&2020 excluded)']
+    options = ['Genre Popularity Distribution','Game Popularity Distribution          ', 'Highest Average Playtime', 'Game Releases per Year (2019&2020 excluded)']
 
     tkvar = tkinter.StringVar(box2)
     tkvar.set(options[0])
 
     menu = tkinter.OptionMenu(box2, tkvar, *options)
-    menu.config(bg=background_color, fg = 'white', activebackground = background_color2, activeforeground = 'white')
-    menu["menu"].config(bg=background_color, fg = 'white', borderwidth = 0, activebackground = background_color2,activeforeground = 'white')
+    menu.config(bg=background_color2, fg = 'white', activebackground = background_color, activeforeground = 'white')
+    menu["menu"].config(bg=background_color2, fg = 'white', borderwidth = 0, activebackground = background_color,activeforeground = 'white')
     menu["highlightthickness"] = 0
     menu.place(x=3,y=3)
 
