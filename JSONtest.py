@@ -3,6 +3,7 @@ import tkinter
 from operator import itemgetter
 import matplotlib.pyplot as plt
 
+
 steam_data = open('steam_data.json','r')
 
 bar_color = '#171A21'
@@ -74,6 +75,45 @@ def create_dashboard():
 def fill_dashboard(list):
     'add data to the dashboard'
 
+    def make_bar_plot():
+        amount_of_players_list = []
+        for entry in list:
+            amount_of_players_list.append(int(int((entry['owners'].split('-')[0]))/10000))
+
+        unique_amount_of_players_list = []
+
+        for x in amount_of_players_list:
+            if x not in unique_amount_of_players_list:
+                unique_amount_of_players_list.append(x)
+        unique_amount_of_players_list = (sorted(unique_amount_of_players_list))
+
+        value_list = []
+        for x in range(len(unique_amount_of_players_list)):
+            value_list.append(amount_of_players_list.count(unique_amount_of_players_list[x]))
+
+        plt.figure(figsize=(6.4, 4.8))
+
+        plt.style.use('ggplot')
+
+        unique_amount_of_players_list.append(unique_amount_of_players_list[-1]*2)
+
+        for x in range(len(unique_amount_of_players_list)):
+            if unique_amount_of_players_list[x]/1000 >=1:
+                unique_amount_of_players_list[x] = f'{int(unique_amount_of_players_list[x]/1000)}k'
+        x = unique_amount_of_players_list[1:]
+        values = value_list
+
+        x_pos = [i for i, _ in enumerate(x)]
+
+        plt.bar(x_pos, values, color = '#aed6f5')
+        plt.xlabel("Highest Estimate of Size Playerbase (in 10000 people)")
+        plt.ylabel("Number of Games")
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+
+        plt.savefig('chart.png')
 
 
     def get_average_playtime_piechart(limit):
@@ -169,7 +209,7 @@ def fill_dashboard(list):
 
 
         ax1.axis('equal')
-        plt.savefig('piechart.png')
+        plt.savefig('chart.png')
         plt.show()
 
 
@@ -184,10 +224,10 @@ def fill_dashboard(list):
     dislikeIcon = tkinter.PhotoImage(file ='icon_thumbsDown.png')
 
     try:
-        pieChart = tkinter.PhotoImage(file='piechart.png')
+        pieChart = tkinter.PhotoImage(file='chart.png')
     except:
         get_genre_piechart(5)
-        pieChart = tkinter.PhotoImage(file='piechart.png')
+        pieChart = tkinter.PhotoImage(file='chart.png')
 
 
     def get_top_rated_games(ratings):
@@ -210,6 +250,7 @@ def fill_dashboard(list):
             best_rated_games = best_rated_games + f'{sorted_ratings_list[x][0]} - {sorted_ratings_list[x][1]}%' + '\n'
 
         return best_rated_games
+
 
     def get_lowest_rated_games(ratings):
         'geeft een string van de laagst beordeelde games terug'
@@ -315,13 +356,14 @@ def fill_dashboard(list):
             pie_limit = int(5)
 
 
-
+        if(chartName == 'Game popularity distribution  '):
+            make_bar_plot()
         if(chartName == 'Steam genre distribution'):
             get_genre_piechart(pie_limit)
         if(chartName == 'Highest average playtime'):
             get_average_playtime_piechart(pie_limit)
         global pieChart
-        pieChart = tkinter.PhotoImage(file='piechart.png')
+        pieChart = tkinter.PhotoImage(file='chart.png')
         pieChartImage.config(image = pieChart)
 
 
@@ -330,7 +372,7 @@ def fill_dashboard(list):
 
 
 
-    options = ['Steam genre distribution', 'Highest average playtime']
+    options = ['Steam genre distribution', 'Highest average playtime', 'Game popularity distribution  ']
 
     tkvar = tkinter.StringVar(box2)
     tkvar.set(options[0])
