@@ -75,6 +75,41 @@ def create_dashboard():
 def fill_dashboard(list):
     'add data to the dashboard'
 
+
+    def make_bar_plot_ratings():
+
+        ratings= []
+
+        for x in range(len(list)):
+                positive_percentage = (round(int(list[x]['positive_ratings']) / int(
+                    (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100))
+                ratings.append(positive_percentage)
+
+        count_list = []
+        for x in range(0,100,10):
+            temp_list = []
+            for i in range(len(ratings)):
+                if(x+10>ratings[i]>=x):
+                     temp_list.append(ratings[i])
+            count_list.append((len(temp_list)))
+
+        x = ['0-10%','10-20%','20-30%','30-40%','40-50%','50-60%','60-70%','70-80%','80-90%','90-100%']
+        values = count_list
+
+        plt.figure(figsize=(6.4, 4.8))
+        plt.style.use('ggplot')
+        x_pos = [i for i, _ in enumerate(x)]
+        plt.bar(x_pos, values, color='#aed6f5')
+        plt.xlabel("")
+        plt.ylabel("Number of Games")
+        plt.xticks(rotation=25)
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+        plt.savefig('chart.png')
+
+
     def make_bar_plot_release_year():
         release_dates = []
         for x in range(len(list)):
@@ -239,12 +274,8 @@ def fill_dashboard(list):
             text.set_color('white')
         for autotext in autotexts:
             autotext.set_color('white')
-
-
         ax1.axis('equal')
         plt.savefig('chart.png')
-        plt.show()
-
 
     global steamlogo
     global dislikeIcon
@@ -385,7 +416,8 @@ def fill_dashboard(list):
 
         if(pie_limit < 1):
             pie_limit = int(5)
-
+        if(chartName == 'Game Rating Distribution (like/dislike ratio)'):
+            make_bar_plot_ratings()
         if(chartName == 'Game Releases per Year (2019&2020 excluded)'):
             make_bar_plot_release_year()
         if(chartName == 'Game Playerbase Distribution          '):
@@ -405,7 +437,7 @@ def fill_dashboard(list):
 
 
 
-    options = ['Genre Popularity Distribution','Game Playerbase Distribution          ', 'Highest Average Playtime', 'Game Releases per Year (2019&2020 excluded)']
+    options = ['Genre Popularity Distribution','Game Playerbase Distribution          ','Game Rating Distribution (like/dislike ratio)', 'Highest Average Playtime', 'Game Releases per Year (2019&2020 excluded)']
 
     tkvar = tkinter.StringVar(box2)
     tkvar.set(options[0])
