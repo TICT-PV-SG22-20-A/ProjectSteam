@@ -3,7 +3,6 @@ import tkinter
 from operator import itemgetter
 import matplotlib.pyplot as plt
 
-
 steam_data = open('steam_data.json','r')
 
 bar_color = '#171A21'
@@ -47,11 +46,13 @@ def create_dashboard():
     bar = tkinter.Frame(root,height = 80,width = 1140, bg = bar_color)
     bar.grid(row = 1, column =1, columnspan = 3)
 
-    global box1 # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
+    # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
+    global box1
     global box2
     global box3
     global box4
     global box5
+
     box1 = tkinter.Frame(root,width = 500, height = 480, bg = background_color)
     box1.grid(row = 2, column = 1)
     box2 = tkinter.Frame(root, width = 640, height = 480, bg = background_color2)
@@ -404,11 +405,6 @@ def fill_dashboard(list):
     pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 0)
     pieChartImage.pack()
     tkinter.Label(box1, text = ten_first_names,font='Arial 12', bg=background_color, fg='white').place(x=132,y=70)
-
-
-
-
-
 
 
     def update_pie_info():
