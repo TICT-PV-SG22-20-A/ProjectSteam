@@ -32,8 +32,7 @@ def create_dashboard():
     root = tkinter.Tk()
     root.geometry('1140x960')
     root.title('SteamStats')
-    root.overrideredirect(True) # haalt de titlebar weg, nodig als je een overlay wilt maken
-
+    root.resizable(False, False)
 
     root.update()
 
@@ -63,14 +62,6 @@ def create_dashboard():
     box4.grid(row = 3, column = 2)
     box5 = tkinter.Frame(root, width=320, height=400, bg=menu_bar_color, )
     box5.grid(row=3, column=3)
-
-
-
-    def terminate_window():
-        'sluit het window'
-        root.destroy()
-
-    tkinter.Button(bar,text = 'X', fg = 'white', bg =  bar_color,width = 2, height = 1, border = 0, command = terminate_window, activebackground=box_color).place(x = 1120, y = 0)
 
 
 def fill_dashboard(list):
