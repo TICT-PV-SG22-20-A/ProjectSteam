@@ -11,7 +11,6 @@ omschrijving van ons doel:
 Een grafisch weergave die een inzicht geeft over het gaming gedrag van vrienden op Steam.
 
 code voor uitvoor:
--1) https://github.com/TICT-PV-SG22-20-A/ProjectSteam 
--2) main.py
+-1) run main.py
 
 
