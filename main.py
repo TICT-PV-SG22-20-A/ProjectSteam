@@ -20,7 +20,7 @@ def convert_to_list(data):
     return data_list
 
 def sort_list_alphabetically(list):
-    'sorteerd de lijst van dictionaries alphabetisch op de naam van de game'
+    'sorteerd de lijst van dictionaries alphabetisch op de naam van de games'
 
     sorted_list = sorted(list, key= itemgetter('name'))
     return sorted_list
@@ -338,11 +338,22 @@ def fill_dashboard(list):
     tkinter.Label(image = statsLogo, borderwidth = 0).place(y = 20, x = 200)
 
 
-    ten_first_names = '\n\nFirst 10 games in the JSON file: \n\n\n\n'
+    def get_first_ten_names():
+        ten_first_names = '\nFirst 10 games in the JSON file: \n\n\n'
 
 
-    for x in range(10):
-        ten_first_names = ten_first_names + (list[x]['name']) + '\n'
+        for x in range(10):
+            ten_first_names = ten_first_names + (list[x]['name']) + '\n'
+
+        return ten_first_names
+
+    def get_first_ten_names_sorted_alphabetically():
+        ten_first_names_sorted_alphabetically = '\nFirst 10 games in the JSON file (sorted alphabetically): \n\n\n'
+
+        for x in range(10):
+            ten_first_names_sorted_alphabetically = ten_first_names_sorted_alphabetically + (sort_list_alphabetically(list)[x]['name']) + '\n'
+
+        return ten_first_names_sorted_alphabetically
 
     global lowest_rated_textbox
 
@@ -385,17 +396,23 @@ def fill_dashboard(list):
     top_rated_textbox.tag_configure("center", justify='center')
     top_rated_textbox.insert(tkinter.END, get_top_rated_games(50000), 'center')
 
-
     rated_games_entry = tkinter.Entry(box3, width=10, bg = background_color, fg = 'white')
     rated_games_entry.insert(0,50000)
-    rated_games_entry.place(x=190, y=240)
-    tkinter.Label(box3, text = 'Minimum amount of ratings:', bg = background_color, fg = 'white').place(x =175, y =200)
-    tkinter.Button(box3,width =5,height = 1,bg = background_color2,fg = 'white', command = refresh_rated_games, text = 'reload').place(x = 270, y = 237)
+    rated_games_entry.place(x=190, y=220)
+    tkinter.Label(box3, text = 'Minimum amount of ratings:', bg = background_color, fg = 'white').place(x =175, y =180)
+    tkinter.Button(box3,width =5,height = 1,bg = background_color2,fg = 'white', command = refresh_rated_games, text = 'reload').place(x = 270, y = 217)
 
 
     pieChartImage = tkinter.Label(box2, image = pieChart, bg = background_color,borderwidth = 0)
     pieChartImage.pack()
-    tkinter.Label(box1, text = ten_first_names,font='Arial 12', bg=background_color, fg='white').place(x=132,y=70)
+
+
+    first_ten_names = get_first_ten_names()
+    tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+
+
+    first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
+    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
 
 
     def update_pie_info():
@@ -448,6 +465,9 @@ def fill_dashboard(list):
     tkinter.Label(box4, image = likeIcon, borderwidth = 0).place(x =6,y = 10)
     tkinter.Label(box5, image = dislikeIcon, borderwidth = 0).place(x =6,y = 10)
 
+    data_list_sorted = sort_list_alphabetically(data_list)
+
+
 
 
 def launch_dashboard():
@@ -455,20 +475,9 @@ def launch_dashboard():
     root.mainloop()
 
 
+# ---------------------------------------------------------------------------------
 
 data_list = (convert_to_list(steam_data))
-data_list_sorted = sort_list_alphabetically(data_list)
-
-print('eerste 5 games uit de json file: ')
-for x in range(5):
-    print(data_list[x]['name'])
-
-print()
-
-print('eerste 5 games uit de json file SORTED ALPHABETICALLY: ')
-for x in range(5):
-    print(data_list_sorted[x]['name'])
-
 create_dashboard()
 fill_dashboard(data_list)
 launch_dashboard()
