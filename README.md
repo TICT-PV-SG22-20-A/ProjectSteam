@@ -8,9 +8,12 @@ Steven van der Ham            1785527               steven.vandenham@student.hu.
 
 
 omschrijving van ons doel:
-Een grafisch weergave die een inzicht geeft over het gaming gedrag van vrienden op Steam.
+Een grafische weergave die een inzicht geeft over het gaming gedrag van vrienden op Steam.
 
-code voor uitvoor:
--1) run main.py
+Hoe voer je de code uit:
+
+-1) Download de files (op: https://github.com/TICT-PV-SG22-20-A/ProjectSteam)
+-2) Open de map met files in pycharm
+-3) run de file 'main.py'
 
 
