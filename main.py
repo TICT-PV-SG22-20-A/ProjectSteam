@@ -465,10 +465,6 @@ def fill_dashboard(list):
     tkinter.Label(box4, image = likeIcon, borderwidth = 0).place(x =6,y = 10)
     tkinter.Label(box5, image = dislikeIcon, borderwidth = 0).place(x =6,y = 10)
 
-    data_list_sorted = sort_list_alphabetically(data_list)
-
-
-
 
 def launch_dashboard():
     'launch dashboard'
