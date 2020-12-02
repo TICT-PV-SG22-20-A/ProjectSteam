@@ -2,8 +2,7 @@ import json
 import tkinter
 from operator import itemgetter
 import matplotlib.pyplot as plt
-
-steam_data = open('steam_data.json','r')
+from random import randint
 
 bar_color = '#171A21'
 menu_bar_color = '#3e7ea7'
@@ -20,10 +19,28 @@ def convert_to_list(data):
     return data_list
 
 def sort_list_alphabetically(list):
-    'sorteerd de lijst van dictionaries alphabetisch op de naam van de games'
+    'sorteert de lijst van dictionaries alphabetisch op de naam van de games, gebruikt een vereenvoudigde vorm van quicksort'
 
-    sorted_list = sorted(list, key= itemgetter('name'))
-    return sorted_list
+    lower = []
+    same = []
+    higher = []
+
+    if len(list) < 2:
+        return list
+
+    pivot = list[randint(0, len(list) - 1)]['name']
+
+    for entry in list:
+
+        if entry['name'] < pivot:
+                lower.append(entry)
+        elif entry['name'] > pivot:
+                higher.append(entry)
+        elif entry['name'] == pivot:
+                same.append(entry)
+
+    return sort_list_alphabetically(lower) + same + sort_list_alphabetically(higher)
+
 
 def create_dashboard():
     'maak het dashboard'
@@ -473,6 +490,7 @@ def launch_dashboard():
 
 # ---------------------------------------------------------------------------------
 
+steam_data = open('steam_data.json','r')
 data_list = (convert_to_list(steam_data))
 create_dashboard()
 fill_dashboard(data_list)
