@@ -295,12 +295,24 @@ def fill_dashboard(list):
     global likeIcon
     global pieChart
     global statsLogo
+    global help_1
+    global help_2
+    global help_3
+    global help_4
+    global information
+
 
 
     steamlogo = tkinter.PhotoImage(file='steam.png')
     statsLogo = tkinter.PhotoImage(file = 'stats.png')
     likeIcon = tkinter.PhotoImage(file = 'icon_thumbsUp.png')
     dislikeIcon = tkinter.PhotoImage(file ='icon_thumbsDown.png')
+    help_1 = tkinter.PhotoImage(file = 'help_1.png')
+    help_2 = tkinter.PhotoImage(file = 'help_2.png')
+    help_3 = tkinter.PhotoImage(file = 'help_3.png')
+    help_4 = tkinter.PhotoImage(file = 'help_4.png')
+    information = tkinter.PhotoImage(file = 'information.png')
+
 
 
     try:
@@ -382,6 +394,8 @@ def fill_dashboard(list):
 
 
 
+
+
     def refresh_rated_games():
         'laadt opnieuw de lijst in'
 
@@ -424,12 +438,12 @@ def fill_dashboard(list):
     pieChartImage.pack()
 
 
-    first_ten_names = get_first_ten_names()
-    tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+   # first_ten_names = get_first_ten_names()
+   # tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
 
 
-    first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
-    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
+    # first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
+    # tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
 
 
     def update_pie_info():
@@ -481,6 +495,44 @@ def fill_dashboard(list):
 
     tkinter.Label(box4, image = likeIcon, borderwidth = 0).place(x =6,y = 10)
     tkinter.Label(box5, image = dislikeIcon, borderwidth = 0).place(x =6,y = 10)
+
+    global check
+    check = True
+
+    def informationMenu():
+        global check
+
+        if(check):
+            global h1
+            global h2
+            global h3
+            global h4
+
+            h1 = tkinter.Label(root, image=help_1, borderwidth=0)
+            h1.place(x=10, y=820)
+            h2 = tkinter.Label(root, image=help_2, borderwidth=0)
+            h2.place(x=600, y=0)
+            h3 = tkinter.Label(root, image=help_3, borderwidth=0)
+            h3.place(x=150, y=500)
+            h4 = tkinter.Label(root, image=help_4, borderwidth=0)
+            h4.place(x=280, y=810)
+
+            check = False
+        else:
+            h1.destroy()
+            h2.destroy()
+            h3.destroy()
+            h4.destroy()
+
+            check = True
+
+
+    tkinter.Button(root, command = informationMenu, image = information,highlightthickness = 0, bd = 0, relief = 'flat').place(x = 1080, y =20)
+
+
+
+
+
 
 
 def launch_dashboard():
