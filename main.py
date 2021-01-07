@@ -393,9 +393,6 @@ def fill_dashboard(list):
     lowest_rated_textbox.insert(tkinter.END, get_lowest_rated_games(50000), 'center')
 
 
-
-
-
     def refresh_rated_games():
         'laadt opnieuw de lijst in'
 
@@ -438,12 +435,12 @@ def fill_dashboard(list):
     pieChartImage.pack()
 
 
-   # first_ten_names = get_first_ten_names()
-   # tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+    first_ten_names = get_first_ten_names()
+    tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
 
 
-    # first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
-    # tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
+    first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
+    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
 
 
     def update_pie_info():
@@ -528,8 +525,6 @@ def fill_dashboard(list):
 
 
     tkinter.Button(root, command = informationMenu, image = information,highlightthickness = 0, bd = 0, relief = 'flat').place(x = 1080, y =20)
-
-
 
 
 
