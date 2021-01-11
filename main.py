@@ -489,7 +489,7 @@ def fill_dashboard(list):
         pieChartImage.config(image = pieChart)
 
     limit_box = tkinter.Entry(box2, bd=2, width=2, bg=background_color2, fg='white')
-    limit_box.place(x=200, y=6)
+    limit_box.place(x=250, y=6)
     limit_box.insert(0, 5)
     tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6,bg = background_color2, fg = 'white').place(x=3,y=450)
 
