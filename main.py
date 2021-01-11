@@ -65,7 +65,6 @@ def create_dashboard():
     root.resizable(False, False)
 
     root.update()
-
     positionRight = int(root.winfo_screenwidth() / 2 - 0.5*root.winfo_width())
     positionDown = int(root.winfo_screenheight() / 2 - 0.5 * root.winfo_height())
 
@@ -390,7 +389,6 @@ def fill_dashboard(list):
             ratings.append(rating)
 
         return random_8_games
-    get_random_8_games()
 
 
 
