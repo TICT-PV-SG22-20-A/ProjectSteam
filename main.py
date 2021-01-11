@@ -378,6 +378,22 @@ def fill_dashboard(list):
     tkinter.Label(root, image=steamlogo, border=0).place(x=10, y=10)
     tkinter.Label(image = statsLogo, borderwidth = 0).place(y = 20, x = 200)
 
+    def get_random_8_games():
+
+        random_8_games = '\n8 random games with like/dislike ratio:\n\n'
+
+
+        for x in range(8):
+            random_ID = randint(0, len(list) - 1)
+            rating = round(int(list[random_ID]['positive_ratings']) / int((int(list[random_ID]['positive_ratings']) + int(list[random_ID]['negative_ratings']))) * 100)
+            random_8_games = random_8_games + (f"{list[random_ID]['name']} - {rating}%\n")
+
+        return random_8_games
+    get_random_8_games()
+
+
+
+
 
     def get_first_ten_names():
         ten_first_names = '\nFirst 10 games in the JSON file: \n\n\n'
@@ -389,7 +405,7 @@ def fill_dashboard(list):
         return ten_first_names
 
     def get_first_ten_names_sorted_alphabetically():
-        ten_first_names_sorted_alphabetically = '\nFirst 10 games in the JSON file (sorted alphabetically): \n\n\n'
+        ten_first_names_sorted_alphabetically = '\nFirst 10 games in the JSON file (sorted alphabetically): \n\n'
 
         for x in range(10):
             ten_first_names_sorted_alphabetically = ten_first_names_sorted_alphabetically + (sort_list_alphabetically(list)[x]['name']) + '\n'
@@ -399,7 +415,7 @@ def fill_dashboard(list):
     global lowest_rated_textbox
 
 
-    lowest_rated_textbox = tkinter.Text(box5, height=21, width=34, bg=menu_bar_color, fg='white', font='Arial 12', wrap='word')
+    lowest_rated_textbox = tkinter.Text(box5, height=21, width=34, bg=menu_bar_color, fg='white', font='Arial 12', wrap='word',border = 0)
     lowest_rated_textbox.place(x=5, y=9)
     lowest_rated_textbox.tag_configure("center", justify='center')
     lowest_rated_textbox.insert(tkinter.END, get_lowest_rated_games(50000), 'center')
@@ -431,7 +447,7 @@ def fill_dashboard(list):
 
     global top_rated_textbox
 
-    top_rated_textbox = tkinter.Text(box4, height = 21, width = 34, bg = box_color, fg = 'white',font='Arial 12', wrap = 'word')
+    top_rated_textbox = tkinter.Text(box4, height = 21, width = 34, bg = box_color, fg = 'white',font='Arial 12', wrap = 'word',border = 0)
     top_rated_textbox.place(x = 5, y = 9)
     top_rated_textbox.tag_configure("center", justify='center')
     top_rated_textbox.insert(tkinter.END, get_top_rated_games(50000), 'center')
@@ -447,12 +463,18 @@ def fill_dashboard(list):
     pieChartImage.pack()
 
 
-    #first_ten_names = get_first_ten_names()
-    #tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+    #tkinter.Label(box1, text = get_first_ten_names(),font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
 
 
-    first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
-    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=85,y=30)
+
+    tkinter.Label(box1, text=get_first_ten_names_sorted_alphabetically(), font='Arial 10', bg=background_color, fg='white').place(x=85,y=2)
+
+
+    random_8_textbox = tkinter.Text(root, height=11, width=65, bg=background_color, fg='white', font='Arial 10', wrap='word', border = 0)
+    random_8_textbox.place(x=18, y=300)
+    random_8_textbox.tag_configure("center", justify='center')
+    random_8_textbox.insert(tkinter.END, get_random_8_games(), 'center')
+
 
 
     def update_pie_info():
@@ -484,7 +506,7 @@ def fill_dashboard(list):
         pieChartImage.config(image = pieChart)
 
     limit_box = tkinter.Entry(box2, bd=2, width=2, bg=background_color2, fg='white')
-    limit_box.place(x=250, y=6)
+    limit_box.place(x=2, y=32)
     limit_box.insert(0, 5)
     tkinter.Button(box2, command = update_pie_info, text = 'reload', width = 6,bg = background_color2, fg = 'white').place(x=3,y=450)
 
