@@ -1,8 +1,25 @@
 import json
+import threading
 import tkinter
 from operator import itemgetter
 import matplotlib.pyplot as plt
 from random import randint
+import time
+
+try:
+    import RPi.GPIO as GPIO
+except ModuleNotFoundError:
+    print('input/output is not available for this device')
+
+
+
+
+try:
+    GPIO.setmode( GPIO.BCM )
+    GPIO.setwarnings( 0 )
+    GPIO.setup( 23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN )
+except NameError:
+    pass
 
 bar_color = '#171A21'
 menu_bar_color = '#3e7ea7'
@@ -435,12 +452,12 @@ def fill_dashboard(list):
     pieChartImage.pack()
 
 
-    first_ten_names = get_first_ten_names()
-    tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+    #first_ten_names = get_first_ten_names()
+    #tkinter.Label(box1, text = first_ten_names,font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
 
 
     first_ten_names_sorted_alphabetically = get_first_ten_names_sorted_alphabetically()
-    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=90,y=250)
+    tkinter.Label(box1, text=first_ten_names_sorted_alphabetically, font='Arial 10', bg=background_color, fg='white').place(x=85,y=30)
 
 
     def update_pie_info():
@@ -526,6 +543,25 @@ def fill_dashboard(list):
 
     tkinter.Button(root, command = informationMenu, image = information,highlightthickness = 0, bd = 0, relief = 'flat').place(x = 1080, y =20)
 
+
+    def button_check():
+        'hier check ik de button'
+
+        try:
+            while(True):
+                if( GPIO.input(23)):
+                    informationMenu()
+                time.sleep(0.1)
+        except NameError:
+            pass
+
+
+
+
+
+
+
+    threading.Thread(target = button_check).start()
 
 
 
