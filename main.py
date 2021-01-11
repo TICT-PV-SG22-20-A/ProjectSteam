@@ -8,18 +8,14 @@ import time
 
 try:
     import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(0)
+    GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 except ModuleNotFoundError:
     print('input/output is not available for this device')
 
 
-
-
-try:
-    GPIO.setmode( GPIO.BCM )
-    GPIO.setwarnings( 0 )
-    GPIO.setup( 23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN )
-except NameError:
-    pass
 
 bar_color = '#171A21'
 menu_bar_color = '#3e7ea7'
@@ -100,7 +96,6 @@ def create_dashboard():
 
 def fill_dashboard(list):
     'voegt data toe aan het dashboarad'
-
 
     def make_bar_plot_ratings():
 
@@ -556,14 +551,7 @@ def fill_dashboard(list):
             pass
 
 
-
-
-
-
-
     threading.Thread(target = button_check).start()
-
-
 
 
 def launch_dashboard():
