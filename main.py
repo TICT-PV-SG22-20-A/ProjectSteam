@@ -287,6 +287,7 @@ def fill_dashboard(list):
 
                 return my_autopct
 
+
             patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct=make_autopct(sizes),
                                                 startangle=90,
                                                 pctdistance=0.85, explode=explode)
@@ -300,7 +301,6 @@ def fill_dashboard(list):
             autotext.set_color('white')
         ax1.axis('equal')
         plt.savefig('chart.png')
-
 
     global steamlogo
     global dislikeIcon
@@ -380,18 +380,17 @@ def fill_dashboard(list):
 
     def get_random_8_games():
 
-        random_8_games = '\n8 random games with like/dislike ratio:\n\n'
+        random_8_games = '\n8 random games with their like/dislike ratio:\n\n'
 
-
+        ratings = [] # list met percentages van games
         for x in range(8):
             random_ID = randint(0, len(list) - 1)
             rating = round(int(list[random_ID]['positive_ratings']) / int((int(list[random_ID]['positive_ratings']) + int(list[random_ID]['negative_ratings']))) * 100)
             random_8_games = random_8_games + (f"{list[random_ID]['name']} - {rating}%\n")
+            ratings.append(rating)
 
         return random_8_games
     get_random_8_games()
-
-
 
 
 
@@ -574,6 +573,7 @@ def fill_dashboard(list):
 
 
     threading.Thread(target = button_check).start()
+
 
 
 def launch_dashboard():
