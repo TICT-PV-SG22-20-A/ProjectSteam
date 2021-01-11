@@ -300,7 +300,7 @@ def fill_dashboard(list):
                                                 startangle=90,
                                                 pctdistance=0.85, explode=explode)
         for text in texts:
-            text.set_color('white')
+            text.set_color('black')
         for autotext in autotexts:
             autotext.set_color('white')
         ax1.axis('equal')
