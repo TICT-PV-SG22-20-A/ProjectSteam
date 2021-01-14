@@ -666,7 +666,7 @@ def fill_dashboard(list):
     tkinter.Label(box5, image=dislikeIcon, borderwidth=0).place(x=6, y=10)
 
     #stats
-    tkinter.Label(root, bg = bar_color, fg = 'white', text = f'Average like/dislike ratio games on steam: {round(get_average_like_dislike_ratio(),2)}%      \u03C3 = {get_standard_deviation_like_dislike_ratio()}').place(x =370,y = 30)
+    tkinter.Label(root, bg = bar_color, fg = 'white', text = f'Average like/dislike ratio games on steam = {round(get_average_like_dislike_ratio(),2)}%      \u03C3 = {get_standard_deviation_like_dislike_ratio()}').place(x =370,y = 30)
 
     global check
     check = True
