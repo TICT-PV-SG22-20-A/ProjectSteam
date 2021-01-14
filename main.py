@@ -1,0 +1,796 @@
+import json
+import threading
+import tkinter
+from operator import itemgetter
+import matplotlib.pyplot as plt
+from random import randint
+import time
+from datetime import datetime, date
+import random
+
+
+try:
+    import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(0)
+    # Knop pin
+    GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    # Servo pin
+    GPIO.setup(25, GPIO.OUT)
+    # LED strip pins
+    GPIO.setup(19, GPIO.OUT)
+    GPIO.setup(26, GPIO.OUT)
+    # Shift register pins
+    GPIO.setup(5, GPIO.OUT)
+    GPIO.setup(6, GPIO.OUT)
+    GPIO.setup(13, GPIO.OUT)
+    # Afstand sensor pins
+    GPIO.setup( 20, GPIO.OUT )
+    GPIO.setup( 21, GPIO.IN, pull_up_down=GPIO.PUD_DOWN )
+
+except ModuleNotFoundError:
+    print('input/output is not available for this device')
+
+bar_color = '#171A21'
+menu_bar_color = '#3e7ea7'
+background_color = '#1B3E54'
+box_color = '#4E6A84'
+background_color2 = '#29455B'
+
+
+def convert_to_list(data):
+    'maakt van de json file een lijst van dictionaries'
+
+    data = (data.read())
+    data_list = json.loads(data)
+
+    return data_list
+
+
+def sort_list_alphabetically(list):
+    'sorteert de lijst van dictionaries alphabetisch op de naam van de games, gebruikt een vereenvoudigde vorm van quicksort'
+
+    lower = []
+    same = []
+    higher = []
+
+    if len(list) < 2:
+        return list
+
+    pivot = list[randint(0, len(list) - 1)]['name']
+
+    for entry in list:
+
+        if entry['name'] < pivot:
+            lower.append(entry)
+        elif entry['name'] > pivot:
+            higher.append(entry)
+        elif entry['name'] == pivot:
+            same.append(entry)
+
+    return sort_list_alphabetically(lower) + same + sort_list_alphabetically(higher)
+
+
+def create_dashboard():
+    'maak het dashboard'
+
+    global root  # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
+    root = tkinter.Tk()
+    root.geometry('1140x960')
+    root.title('SteamStats')
+    root.resizable(False, False)
+
+    root.update()
+    positionRight = int(root.winfo_screenwidth() / 2 - 0.5 * root.winfo_width())
+    positionDown = int(root.winfo_screenheight() / 2 - 0.5 * root.winfo_height())
+
+    root.geometry("+{}+{}".format(positionRight, positionDown))
+
+    bar = tkinter.Frame(root, height=80, width=1140, bg=bar_color)
+    bar.grid(row=1, column=1, columnspan=3)
+
+    # ik maak deze global omdat ik hier toegang tot moet hebben buiten de functie
+    global box1
+    global box2
+    global box3
+    global box4
+    global box5
+
+    box1 = tkinter.Frame(root, width=500, height=480, bg=background_color)
+    box1.grid(row=2, column=1)
+    box2 = tkinter.Frame(root, width=640, height=480, bg=background_color2)
+    box2.grid(row=2, column=2, columnspan=2)
+    box3 = tkinter.Frame(root, width=500, height=400, bg=background_color)
+    box3.grid(row=3, column=1)
+    box4 = tkinter.Frame(root, width=320, height=400, bg=box_color)
+    box4.grid(row=3, column=2)
+    box5 = tkinter.Frame(root, width=320, height=400, bg=menu_bar_color, )
+    box5.grid(row=3, column=3)
+
+
+def fill_dashboard(list):
+    'voegt data toe aan het dashboarad'
+
+    def make_bar_plot_ratings():
+
+        ratings = []
+
+        for x in range(len(list)):
+            positive_percentage = (round(int(list[x]['positive_ratings']) / int(
+                (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100))
+            ratings.append(positive_percentage)
+
+        count_list = []
+        for x in range(0, 100, 10):
+            temp_list = []
+            for i in range(len(ratings)):
+                if (x + 10 > ratings[i] >= x):
+                    temp_list.append(ratings[i])
+            count_list.append((len(temp_list)))
+
+        x = ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%']
+        values = count_list
+
+        plt.figure(figsize=(6.4, 4.8))
+        plt.style.use('ggplot')
+        x_pos = [i for i, _ in enumerate(x)]
+        plt.bar(x_pos, values, color='#aed6f5')
+        plt.xlabel("")
+        plt.ylabel("Number of Games")
+        plt.xticks(rotation=25)
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+        plt.savefig('chart.png')
+
+    def make_bar_plot_release_year():
+        'maakt een .png aan van een specifiek staafdiagram'
+        release_dates = []
+        for x in range(len(list)):
+            release_dates.append(list[x]['release_date'].split('-')[0])
+
+        unique_release_dates = []
+        for x in range(len(release_dates)):
+            if (release_dates[x] not in unique_release_dates):
+                unique_release_dates.append(release_dates[x])
+        unique_release_dates = sorted(unique_release_dates)
+
+        value_list = []
+        for x in range(len(unique_release_dates)):
+            value_list.append(release_dates.count(unique_release_dates[x]))
+
+        x = unique_release_dates[:-1]
+        values = value_list[:-1]
+
+        plt.figure(figsize=(6.4, 4.8))
+        plt.style.use('ggplot')
+        x_pos = [i for i, _ in enumerate(x)]
+        plt.bar(x_pos, values, color='#aed6f5')
+        plt.xlabel("")
+        plt.ylabel("Number of Games Released")
+        plt.xticks(rotation=45)
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+
+        plt.savefig('chart.png')
+
+    def make_bar_plot_game_population():
+        'maakt een .png aan van een specifiek staafdiagram'
+
+        amount_of_players_list = []
+        for entry in list:
+            amount_of_players_list.append(int(int((entry['owners'].split('-')[0])) / 10000))
+
+        unique_amount_of_players_list = []
+
+        for x in amount_of_players_list:
+            if x not in unique_amount_of_players_list:
+                unique_amount_of_players_list.append(x)
+        unique_amount_of_players_list = (sorted(unique_amount_of_players_list))
+
+        value_list = []
+        for x in range(len(unique_amount_of_players_list)):
+            value_list.append(amount_of_players_list.count(unique_amount_of_players_list[x]))
+
+        plt.figure(figsize=(6.4, 4.8))
+
+        plt.style.use('ggplot')
+
+        unique_amount_of_players_list.append(unique_amount_of_players_list[-1] * 2)
+
+        for x in range(len(unique_amount_of_players_list)):
+            if unique_amount_of_players_list[x] / 1000 >= 1:
+                unique_amount_of_players_list[x] = f'{int(unique_amount_of_players_list[x] / 1000)}k'
+        x = unique_amount_of_players_list[1:]
+        values = value_list
+
+        x_pos = [i for i, _ in enumerate(x)]
+
+        plt.bar(x_pos, values, color='#aed6f5')
+        plt.xlabel("Highest Estimate of Size Playerbase (in 10000 people)")
+        plt.ylabel("Number of Games")
+
+        plt.xticks(x_pos, x)
+        ax = plt.gca()
+        ax.set_facecolor('#29455B')
+
+        plt.savefig('chart.png')
+
+    def get_average_playtime_piechart(limit):
+        'maakt een average playtime piechart'
+        name = 'Highest Average Playtime'
+        playtime_dict = {}
+        for entry in list:
+            if (int(entry['positive_ratings']) + int(entry['negative_ratings']) > 1000):
+                playtime_dict[entry['name']] = entry['average_playtime']
+
+        playtime_dict = sorted(playtime_dict.items(), key=itemgetter(1))
+        playtime_dict.reverse()
+
+        playtime_dict = playtime_dict[:limit]
+
+        make_piechart(playtime_dict, name)
+
+    def get_genre_piechart(limit):
+        'maak een genre distributie piechart'
+        name = 'Genre Popularity Distribution'
+
+        genre_tags = []
+        for entry in list:
+            tags = (entry['steamspy_tags'].split(';'))
+            for tag in tags:
+                genre_tags.append(tag)
+
+        genre_tags_dict = {}
+        for x in set(genre_tags):
+            genre_tags_dict[x] = genre_tags.count(x)
+
+        genre_tags_list = sorted(genre_tags_dict.items(), key=itemgetter(1))
+        genre_tags_list.reverse()
+
+        genre_tags_list = genre_tags_list[:limit]
+
+        make_piechart(genre_tags_list, name)
+
+    def make_piechart(dict, name):
+        'maak de piechart .png'
+
+        labels = []
+        sizes = []
+
+        for entry in dict:
+            labels.append(entry[0])
+            sizes.append(entry[1])
+
+        fig1, ax1 = plt.subplots()
+
+        centre_circle = plt.Circle((0, 0), 0.70, fc='#29455B')
+        fig = plt.gcf()
+        fig.gca().add_artist(centre_circle)
+
+        fig.set_facecolor('#29455B')
+
+
+        colors = []
+        counter = random.randint(0,4)
+        while(len(colors)!= len(labels)):
+
+            if counter > 4:
+                counter = 0
+
+            if(counter==0):
+                colors.append('#{:06x}'.format(random.randint(0x3e7e90, 0x3e7eff)))
+            elif(counter==1):
+                colors.append('#{:06x}'.format(random.randint(0x222630, 0x22264f)))
+            elif(counter==2):
+                colors.append('#{:06x}'.format(random.randint(0x507b95, 0x507bff)))
+            elif(counter==3):
+                colors.append('#{:06x}'.format(random.randint(0x2a4b5, 0x2a4ff)))
+            elif(counter==4):
+                colors.append('#{:06x}'.format(random.randint(0x1a3140, 0x1a3177)))
+
+            counter += 1
+
+
+
+        explode = []
+
+        for x in range(len(labels)):
+            explode.append(0.05)
+
+        if (name == 'Highest Average Playtime'):
+            for x in range(len(sizes)):
+                sizes[x] = int(sizes[x] / 60)
+
+            def make_autopct(values):
+                def my_autopct(pct):
+                    total = sum(values)
+                    val = int(round(pct * total / 100.0))
+                    return '{v:d}h'.format(p=pct, v=val)
+
+                return my_autopct
+
+            patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct=make_autopct(sizes),
+                                                startangle=90,
+                                                pctdistance=0.85, explode=explode)
+        else:
+            patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct='%1.1f%%',
+                                                startangle=90,
+                                                pctdistance=0.85, explode=explode)
+        for text in texts:
+            text.set_color('black')
+        for autotext in autotexts:
+            autotext.set_color('white')
+        ax1.axis('equal')
+        plt.savefig('chart.png')
+        plt.close()
+
+    global steamlogo
+    global dislikeIcon
+    global likeIcon
+    global pieChart
+    global statsLogo
+    global help_1
+    global help_2
+    global help_3
+    global help_4
+    global information
+
+    steamlogo = tkinter.PhotoImage(file='steam.png')
+    statsLogo = tkinter.PhotoImage(file='stats.png')
+    likeIcon = tkinter.PhotoImage(file='icon_thumbsUp.png')
+    dislikeIcon = tkinter.PhotoImage(file='icon_thumbsDown.png')
+    help_1 = tkinter.PhotoImage(file='help_1.png')
+    help_2 = tkinter.PhotoImage(file='help_2.png')
+    help_3 = tkinter.PhotoImage(file='help_3.png')
+    help_4 = tkinter.PhotoImage(file='help_4.png')
+    information = tkinter.PhotoImage(file='information.png')
+
+    try:
+        pieChart = tkinter.PhotoImage(file='chart.png')
+    except:
+        get_genre_piechart(5)
+        pieChart = tkinter.PhotoImage(file='chart.png')
+
+    def get_top_rated_games(ratings):
+        'geeft een string van de hoogst beordeelde games terug'
+
+        ratings_dict = {}
+
+        for x in range(len(list)):
+            if (int(int(list[x]['positive_ratings']) + int(list[x]['negative_ratings'])) > int(ratings)):
+                positive_percentage = (round(int(list[x]['positive_ratings']) / int(
+                    (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100))
+                ratings_dict[list[x]['name']] = positive_percentage
+
+        sorted_ratings_list = sorted(ratings_dict.items(), key=itemgetter(1))
+        sorted_ratings_list.reverse()
+
+        best_rated_games = '\n\nMost liked steam games:\n\n\n'
+
+        for x in range(12):
+            best_rated_games = best_rated_games + f'{sorted_ratings_list[x][0]} - {sorted_ratings_list[x][1]}%' + '\n'
+
+        return best_rated_games
+
+    def get_lowest_rated_games(ratings):
+        'geeft een string van de laagst beordeelde games terug'
+        ratings_dict = {}
+
+        for x in range(len(list)):
+            if (int(int(list[x]['positive_ratings']) + int(list[x]['negative_ratings'])) > int(ratings)):
+                positive_percentage = (round(int(list[x]['positive_ratings']) / int(
+                    (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100))
+                ratings_dict[list[x]['name']] = positive_percentage
+
+        sorted_ratings_list = sorted(ratings_dict.items(), key=itemgetter(1))
+
+        lowest_rated_games = '\n\nLeast liked steam games:\n\n\n'
+
+        for x in range(12):
+            lowest_rated_games = lowest_rated_games + f'{sorted_ratings_list[x][0]} - {sorted_ratings_list[x][1]}%' + '\n'
+
+        return lowest_rated_games
+
+    tkinter.Label(root, image=steamlogo, border=0).place(x=10, y=10)
+    tkinter.Label(image=statsLogo, borderwidth=0).place(y=20, x=200)
+
+    def led_strip(percentages):
+        # Zet de LED strip op kleuren op basis van procenten
+        def apa102_send_bytes(bytes):
+            for byte in bytes:
+                for bit in byte:
+                    if bit == 1:
+                        GPIO.output(26, GPIO.HIGH)
+                    if bit == 0:
+                        GPIO.output(26, GPIO.LOW)
+                    GPIO.output(19, GPIO.HIGH)
+                    GPIO.output(19, GPIO.LOW)
+
+        def apa102(colors):
+            nullen = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0]]
+            apa102_send_bytes(nullen)
+
+            nieuwe_bytes = []
+            for i in colors:
+                nieuwe_bytes.append([1, 1, 1, 1, 1, 1, 1, 1])
+                for b in i:
+                    color_byte = []
+                    getal = f'{b:08b}'
+                    for nummer in getal:
+                        color_byte.append(int(nummer))
+                    nieuwe_bytes.append(color_byte)
+
+            apa102_send_bytes(nieuwe_bytes)
+
+            eenen = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1, 1]]
+            apa102_send_bytes(eenen)
+
+        red = [0, 0, 5]
+        green = [0, 5, 0]
+
+        kleuren = []
+        for getal in percentages:
+            if getal < 60:
+                kleuren.append(red)
+            elif getal >= 60:
+                kleuren.append(green)
+
+        apa102(kleuren)
+
+    def servo(procent):
+        # Zet de Servo op positie op basis van een procent
+        def pulse(delay1, delay2):
+            GPIO.output(25, GPIO.HIGH)
+            time.sleep(delay1)
+            GPIO.output(25, GPIO.LOW)
+            time.sleep(delay2)
+
+        def servo_pulse(position):
+            tijd = round(((position / 100) * 2 + 0.5) / 1000, 10)
+            if tijd == 0.0025:
+                tijd = 0.0024
+            pulse(tijd, 0.02)
+
+        servo_pulse(procent)
+
+
+    def get_average_like_dislike_ratio():
+        'geeft de gemiddelde like/dislike ratio terug van alle games op steam'
+
+        ratings = []  # list met percentages van games
+        for x in range(len(list)):
+            rating = round(int(list[x]['positive_ratings']) / int(
+                (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100)
+            ratings.append(rating)
+
+        average_like_dislike_ratio = sum(ratings)/len(ratings)
+        return average_like_dislike_ratio
+
+
+
+    def get_standard_deviation_like_dislike_ratio():
+        'geeft de standaard afwijking van het like/dislike ratio van alle games terug'
+
+        average = get_average_like_dislike_ratio()
+
+        #maak een lijst met onafgeronde like/dislike ratios
+        ratings = []
+        for x in range(len(list)):
+            rating = int(list[x]['positive_ratings'])/(int(list[x]['positive_ratings'])+int(list[x]['negative_ratings']))*100
+            ratings.append(rating)
+
+        #bereken de afstand van het gemiddelde voor elke waarde
+        distances_from_average = []
+
+        for rating in ratings:
+            distance_from_average = rating - average
+            distances_from_average.append(distance_from_average)
+
+        #doe de afstanden van het gemiddelde in het kwadraat
+        distances_from_average_sq = []
+
+        for distance_from_average in distances_from_average:
+            distance_from_average_sq = distance_from_average**2
+            distances_from_average_sq.append(distance_from_average_sq)
+
+        #bereken het gemiddelde van de afstanden van het gemiddelde(variantie)
+        variance = sum(distances_from_average_sq)/len(distances_from_average_sq)
+
+        #neem de wortel van dit gemiddelde
+        standard_deviation = variance**0.5
+
+        return standard_deviation
+
+
+
+
+
+    get_standard_deviation_like_dislike_ratio()
+
+
+
+
+    def get_random_8_games():
+
+        random_8_games = '\n8 random games with their like/dislike ratio:\n\n'
+
+        ratings = []  # list met percentages van games
+        for x in range(8):
+            random_ID = randint(0, len(list) - 1)
+            rating = round(int(list[random_ID]['positive_ratings']) / int(
+                (int(list[random_ID]['positive_ratings']) + int(list[random_ID]['negative_ratings']))) * 100)
+            random_8_games = random_8_games + (f"{list[random_ID]['name']} - {rating}%\n")
+            ratings.append(rating)
+
+        try:
+            #Servo zetten
+            servo(ratings[0])
+            #LED Strip zetten
+            led_strip(ratings)
+        except NameError:
+            pass
+
+        return random_8_games
+
+    def get_first_ten_names():
+        ten_first_names = '\nFirst 10 games in the JSON file: \n\n\n'
+
+        for x in range(10):
+            ten_first_names = ten_first_names + (list[x]['name']) + '\n'
+
+        return ten_first_names
+
+    def get_first_ten_names_sorted_alphabetically():
+        ten_first_names_sorted_alphabetically = '\nFirst 10 games in the JSON file (sorted alphabetically): \n\n'
+
+        for x in range(10):
+            ten_first_names_sorted_alphabetically = ten_first_names_sorted_alphabetically + (
+            sort_list_alphabetically(list)[x]['name']) + '\n'
+
+        return ten_first_names_sorted_alphabetically
+
+    global lowest_rated_textbox
+
+    lowest_rated_textbox = tkinter.Text(box5, height=21, width=34, bg=menu_bar_color, fg='white', font='Arial 12',
+                                        wrap='word', border=0)
+    lowest_rated_textbox.place(x=5, y=9)
+    lowest_rated_textbox.tag_configure("center", justify='center')
+    lowest_rated_textbox.insert(tkinter.END, get_lowest_rated_games(50000), 'center')
+
+    def refresh_rated_games():
+        'laadt opnieuw de lijst in'
+
+        entry = rated_games_entry.get()
+
+        try:
+            if entry == '':
+                entry = 20000
+
+            if (int(entry) > 100000):
+                entry = 100000
+
+            lowest_rated_textbox.delete(1.0, tkinter.END)
+            lowest_rated_textbox.insert(tkinter.END, get_lowest_rated_games(entry), 'center')
+
+            top_rated_textbox.delete(1.0, tkinter.END)
+            top_rated_textbox.insert(tkinter.END, get_top_rated_games(entry), 'center')
+
+        except ValueError:
+            print("not a number")
+
+    global top_rated_textbox
+
+    top_rated_textbox = tkinter.Text(box4, height=21, width=34, bg=box_color, fg='white', font='Arial 12', wrap='word',
+                                     border=0)
+    top_rated_textbox.place(x=5, y=9)
+    top_rated_textbox.tag_configure("center", justify='center')
+    top_rated_textbox.insert(tkinter.END, get_top_rated_games(50000), 'center')
+
+    rated_games_entry = tkinter.Entry(box3, width=10, bg=background_color, fg='white')
+    rated_games_entry.insert(0, 50000)
+    rated_games_entry.place(x=190, y=220)
+    tkinter.Label(box3, text='Minimum amount of ratings:', bg=background_color, fg='white').place(x=175, y=180)
+    tkinter.Button(box3, width=5, height=1, bg=background_color2, fg='white', command=refresh_rated_games,
+                   text='reload').place(x=270, y=217)
+
+    pieChartImage = tkinter.Label(box2, image=pieChart, bg=background_color, borderwidth=0)
+    pieChartImage.pack()
+
+    # tkinter.Label(box1, text = get_first_ten_names(),font='Arial 10', bg=background_color, fg='white').place(x=150,y=0)
+
+    tkinter.Label(box1, text=get_first_ten_names_sorted_alphabetically(), font='Arial 10', bg=background_color,
+                  fg='white').place(x=85, y=2)
+
+    random_8_textbox = tkinter.Text(root, height=11, width=65, bg=background_color, fg='white', font='Arial 10',
+                                    wrap='word', border=0)
+    random_8_textbox.place(x=18, y=300)
+    random_8_textbox.tag_configure("center", justify='center')
+    random_8_textbox.insert(tkinter.END, get_random_8_games(), 'center')
+
+    def update_pie_info():
+        'refresh de piechart'
+
+        chartName = tkvar.get()
+
+        pie_limit = limit_box.get()
+
+        try:
+            pie_limit = int(pie_limit)
+        except:
+            pie_limit = int(5)
+
+        if (pie_limit < 1):
+            pie_limit = int(5)
+        if (chartName == 'Game Rating Distribution (like/dislike ratio)'):
+            make_bar_plot_ratings()
+        if (chartName == 'Game Releases per Year (2019&2020 excluded)'):
+            make_bar_plot_release_year()
+        if (chartName == 'Game Playerbase Distribution          '):
+            make_bar_plot_game_population()
+        if (chartName == 'Genre Popularity Distribution'):
+            get_genre_piechart(pie_limit)
+        if (chartName == 'Highest Average Playtime'):
+            get_average_playtime_piechart(pie_limit)
+        global pieChart
+        pieChart = tkinter.PhotoImage(file='chart.png')
+        pieChartImage.config(image=pieChart)
+
+    limit_box = tkinter.Entry(box2, bd=2, width=2, bg=background_color2, fg='white')
+    limit_box.place(x=2, y=32)
+    limit_box.insert(0, 5)
+    tkinter.Button(box2, command=update_pie_info, text='reload', width=6, bg=background_color2, fg='white').place(x=3,
+                                                                                                                  y=450)
+
+    options = ['Genre Popularity Distribution', 'Game Playerbase Distribution          ',
+               'Game Rating Distribution (like/dislike ratio)', 'Highest Average Playtime',
+               'Game Releases per Year (2019&2020 excluded)']
+
+    tkvar = tkinter.StringVar(box2)
+    tkvar.set(options[0])
+
+    menu = tkinter.OptionMenu(box2, tkvar, *options)
+    menu.config(bg=background_color2, fg='white', activebackground=background_color, activeforeground='white')
+    menu["menu"].config(bg=background_color2, fg='white', borderwidth=0, activebackground=background_color,
+                        activeforeground='white')
+    menu["highlightthickness"] = 0
+    menu.place(x=3, y=3)
+
+    tkinter.Label(box4, image=likeIcon, borderwidth=0).place(x=6, y=10)
+    tkinter.Label(box5, image=dislikeIcon, borderwidth=0).place(x=6, y=10)
+
+    #stats
+    tkinter.Label(root, bg = bar_color, fg = 'white', text = f'Average like/dislike ratio games on steam = {round(get_average_like_dislike_ratio(),2)}%      \u03C3 = {get_standard_deviation_like_dislike_ratio()}').place(x =370,y = 30)
+
+    global check
+    check = True
+
+    def informationMenu():
+        global check
+
+        if (check):
+            global h1
+            global h2
+            global h3
+            global h4
+
+            h1 = tkinter.Label(root, image=help_1, borderwidth=0)
+            h1.place(x=10, y=820)
+            h2 = tkinter.Label(root, image=help_2, borderwidth=0)
+            h2.place(x=800, y=10)
+            h3 = tkinter.Label(root, image=help_3, borderwidth=0)
+            h3.place(x=150, y=500)
+            h4 = tkinter.Label(root, image=help_4, borderwidth=0)
+            h4.place(x=280, y=810)
+
+            check = False
+        else:
+            h1.destroy()
+            h2.destroy()
+            h3.destroy()
+            h4.destroy()
+
+            check = True
+
+    tkinter.Button(root, command=informationMenu, image=information, highlightthickness=0, bd=0, relief='flat').place(
+        x=1080, y=20)
+
+    def button_check():
+        'hier check ik de button'
+        try:
+            vorige = None
+            while True:
+                deze = GPIO.input(23)
+                if vorige != deze:
+                    if( GPIO.input(23) ):
+                        informationMenu()
+                vorige = deze
+                time.sleep( 0.1 )
+        except NameError:
+            pass
+
+    def led_shift():
+        try:
+            LEDS = (1, 2, 3, 4, 5, 6, 7, 8)
+            def shift(value, delay ):
+                for gpio in LEDS:
+                    if value % 2 == 1:
+                        GPIO.output(13, GPIO.HIGH)
+                        GPIO.output(5, GPIO.HIGH)
+                        GPIO.output(5, GPIO.LOW)
+                    else:
+                        GPIO.output(13, GPIO.LOW)
+                        GPIO.output(5, GPIO.HIGH)
+                        GPIO.output(5, GPIO.LOW)
+                    value = value // 2
+                GPIO.output(6, GPIO.HIGH)
+                GPIO.output(6, GPIO.LOW)
+
+                time.sleep(delay)
+
+            delay = 0.1
+            while True:
+                shift(1, delay)
+                shift(2, delay)
+                shift(4, delay)
+                shift(8, delay)
+                shift(16, delay)
+                shift(32, delay)
+                shift(64, delay)
+                shift(128, delay)
+                
+        except NameError:
+            pass
+            
+    def afstand_sensor():
+        try:
+            while True:
+                GPIO.output(20, GPIO.HIGH)
+                time.sleep(0.00001)
+                GPIO.output(20, GPIO.LOW)
+               
+                begin = None
+                while True:
+                    if GPIO.input(21) and begin == None:
+                        begin = datetime.now().time()
+                        break
+
+                einde = None
+                while True:
+                    if not GPIO.input(21) and einde == None:
+                        einde = datetime.now().time()
+                        break
+                        
+                snelheid_geluid_per_seconde = 34300   
+                duratie = (datetime.combine(date.min, einde) - datetime.combine(date.min, begin)).total_seconds()
+                afstand = snelheid_geluid_per_seconde * duratie / 2
+                if afstand < 4.5:
+                    update_pie_info()
+                time.sleep(0.1)
+                
+        except NameError:
+            pass
+
+    threading.Thread(target=button_check).start()
+    threading.Thread(target=led_shift).start()
+    threading.Thread(target=afstand_sensor).start()
+
+
+def launch_dashboard():
+    'launch dashboard'
+    root.mainloop()
+
+
+# ---------------------------------------------------------------------------------
+
+steam_data = open('steam_data.json', 'r')
+data_list = (convert_to_list(steam_data))
+create_dashboard()
+fill_dashboard(data_list)
+launch_dashboard()
