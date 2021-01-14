@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from random import randint
 import time
 from datetime import datetime, date
+import random
+
 
 try:
     import RPi.GPIO as GPIO
@@ -272,7 +274,28 @@ def fill_dashboard(list):
 
         fig.set_facecolor('#29455B')
 
-        colors = ['#222630', '#1f2947', '#171A21', '#3e7ea7', '#1B3E54', '#4E6A84', '#aed6f5']
+
+        colors = []
+        counter = random.randint(0,4)
+        while(len(colors)!= len(labels)):
+
+            if counter > 4:
+                counter = 0
+
+            if(counter==0):
+                colors.append('#{:06x}'.format(random.randint(0x3e7e90, 0x3e7eff)))
+            elif(counter==1):
+                colors.append('#{:06x}'.format(random.randint(0x222630, 0x22264f)))
+            elif(counter==2):
+                colors.append('#{:06x}'.format(random.randint(0x507b95, 0x507bff)))
+            elif(counter==3):
+                colors.append('#{:06x}'.format(random.randint(0x2a4b5, 0x2a4ff)))
+            elif(counter==4):
+                colors.append('#{:06x}'.format(random.randint(0x1a3140, 0x1a3177)))
+
+            counter += 1
+
+
 
         explode = []
 
@@ -304,6 +327,7 @@ def fill_dashboard(list):
             autotext.set_color('white')
         ax1.axis('equal')
         plt.savefig('chart.png')
+        plt.close()
 
     global steamlogo
     global dislikeIcon
@@ -435,6 +459,63 @@ def fill_dashboard(list):
             pulse(tijd, 0.02)
 
         servo_pulse(procent)
+
+
+    def get_average_like_dislike_ratio():
+        'geeft de gemiddelde like/dislike ratio terug van alle games op steam'
+
+        ratings = []  # list met percentages van games
+        for x in range(len(list)):
+            rating = round(int(list[x]['positive_ratings']) / int(
+                (int(list[x]['positive_ratings']) + int(list[x]['negative_ratings']))) * 100)
+            ratings.append(rating)
+
+        average_like_dislike_ratio = sum(ratings)/len(ratings)
+        return average_like_dislike_ratio
+
+
+
+    def get_standard_deviation_like_dislike_ratio():
+        'geeft de standaard afwijking van het like/dislike ratio van alle games terug'
+
+        average = get_average_like_dislike_ratio()
+
+        #maak een lijst met onafgeronde like/dislike ratios
+        ratings = []
+        for x in range(len(list)):
+            rating = int(list[x]['positive_ratings'])/(int(list[x]['positive_ratings'])+int(list[x]['negative_ratings']))*100
+            ratings.append(rating)
+
+        #bereken de afstand van het gemiddelde voor elke waarde
+        distances_from_average = []
+
+        for rating in ratings:
+            distance_from_average = rating - average
+            distances_from_average.append(distance_from_average)
+
+        #doe de afstanden van het gemiddelde in het kwadraat
+        distances_from_average_sq = []
+
+        for distance_from_average in distances_from_average:
+            distance_from_average_sq = distance_from_average**2
+            distances_from_average_sq.append(distance_from_average_sq)
+
+        #bereken het gemiddelde van de afstanden van het gemiddelde(variantie)
+        variance = sum(distances_from_average_sq)/len(distances_from_average_sq)
+
+        #neem de wortel van dit gemiddelde
+        standard_deviation = variance**0.5
+
+        return standard_deviation
+
+
+
+
+
+    get_standard_deviation_like_dislike_ratio()
+
+
+
 
     def get_random_8_games():
 
