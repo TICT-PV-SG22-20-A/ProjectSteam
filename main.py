@@ -541,9 +541,10 @@ def fill_dashboard(list):
     def get_first_ten_names_sorted_alphabetically():
         ten_first_names_sorted_alphabetically = '\nFirst 10 games in the JSON file (sorted alphabetically): \n\n'
 
+        alpha_list = sort_list_alphabetically(list)
+
         for x in range(10):
-            ten_first_names_sorted_alphabetically = ten_first_names_sorted_alphabetically + (
-            sort_list_alphabetically(list)[x]['name']) + '\n'
+            ten_first_names_sorted_alphabetically += alpha_list[x]['name'] + '\n'
 
         return ten_first_names_sorted_alphabetically
 
@@ -657,7 +658,7 @@ def fill_dashboard(list):
     tkinter.Label(box5, image=dislikeIcon, borderwidth=0).place(x=6, y=10)
 
     #stats
-    tkinter.Label(root, bg = bar_color, fg = 'white', text = f'Average like/dislike ratio games on steam = {round(get_average_like_dislike_ratio(),2)}%      \u03C3 = {round(get_standard_deviation_like_dislike_ratio(),2)}%').place(x =370,y = 30)
+    tkinter.Label(root, bg = bar_color, fg = 'white', text = f'Average like/dislike ratio for games on steam = {round(get_average_like_dislike_ratio(),2)}%      \u03C3 = {round(get_standard_deviation_like_dislike_ratio(),2)}%').place(x =370,y = 30)
 
     global check
     check = True
