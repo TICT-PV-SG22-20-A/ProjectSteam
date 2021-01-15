@@ -672,9 +672,9 @@ def fill_dashboard(list):
     rated_games_entry = tkinter.Entry(box3, width=10, bg=background_color, fg='white')
     rated_games_entry.insert(0, 50000)
     rated_games_entry.place(x=190, y=220)
-    tkinter.Label(box3, text='Minimum amount of ratings:', bg=background_color, fg='white').place(x=175, y=180)
+    tkinter.Label(box3, text='Minimum amount of ratings:', bg=background_color, fg='white').place(x=169, y=180)
     tkinter.Button(box3, width=5, height=1, bg=background_color2, fg='white', command=refresh_rated_games,
-                   text='reload').place(x=270, y=217)
+                   text='reload').place(x=265, y=217)
 
     pieChartImage = tkinter.Label(box2, image=pieChart, bg=background_color, borderwidth=0)
     pieChartImage.pack()
@@ -685,7 +685,7 @@ def fill_dashboard(list):
 
     random_8_textbox = tkinter.Text(root, height=11, width=65, bg=background_color, fg='white', font='Arial 10',
                                     wrap='word', border=0)
-    random_8_textbox.place(x=18, y=330)
+    random_8_textbox.place(x=20, y=330)
     random_8_textbox.tag_configure("center", justify='center')
     random_8_textbox.insert(tkinter.END, get_random_8_games(), 'center')
 
