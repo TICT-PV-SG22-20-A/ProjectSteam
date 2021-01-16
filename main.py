@@ -274,11 +274,9 @@ def fill_dashboard(list):
         playtime_dict = sorted(playtime_dict.items(), key=itemgetter(1))
         playtime_dict.reverse()
 
-        #de limit is het nummer dat de gebruiker invult bij het genereren van de chart
-        playtime_dict = playtime_dict[:limit]
 
         #geef de data door aan de make_piechart functie
-        make_piechart(playtime_dict, name)
+        make_piechart(playtime_dict, name, limit,'playtime')
 
     def get_genre_piechart(limit):
         'loop door de data om de piechart "genre popularity distribution" te maken'
@@ -300,13 +298,13 @@ def fill_dashboard(list):
         genre_tags_list = sorted(genre_tags_dict.items(), key=itemgetter(1))
         genre_tags_list.reverse()
 
-        genre_tags_list = genre_tags_list[:limit]
-
         #geef de data door aan de make_piechart functie
-        make_piechart(genre_tags_list, name)
+        make_piechart(genre_tags_list, name, limit,'genre')
 
-    def make_piechart(dict, name):
+    def make_piechart(dict, name,limit,type):
         'maak de piechart .png, wordt gebruikt door de get_genre_piechart en get_average_playtime_piechart functies'
+
+
 
         labels = []
         sizes = []
@@ -316,6 +314,19 @@ def fill_dashboard(list):
             labels.append(entry[0])
             sizes.append(entry[1])
 
+        if(type == 'genre' and limit < len(labels)):
+            #bereken wat het toaal van alle genres is die niet op de chart passen (other)
+            remainder = (sum(sizes[limit-1:]))
+
+            labels = labels[:limit-1]
+            sizes = sizes[:limit-1]
+            sizes.append(remainder)
+
+            #label voor het totaal van alle genres die niet op de chart passen
+            labels.append('other')
+        else:
+            labels = labels[:limit]
+            sizes = sizes[:limit]
 
         #matplotlib stuff
         fig1, ax1 = plt.subplots()
@@ -369,14 +380,16 @@ def fill_dashboard(list):
 
                 return my_autopct
 
-        #matplotlib stuff
+
+            #matplotlib stuff
             patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct=make_autopct(sizes),
                                                 startangle=90,
                                                 pctdistance=0.85, explode=explode)
         else:
             patches, texts, autotexts = ax1.pie(sizes, colors=colors, labels=labels, autopct='%1.1f%%',
                                                 startangle=90,
-                                                pctdistance=0.85, explode=explode)
+                                           pctdistance=0.85, explode=explode)
+
         for text in texts:
             text.set_color('black')
         for autotext in autotexts:
