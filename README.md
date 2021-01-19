@@ -24,8 +24,8 @@ Voor linux:
 
 type de volgende commands in in uw terminal:
 
--2) sudo chown $USER:$USER Lib installatie Linux.bash
--3) sudo chmod +x Lib installatie Linux.bash
+-2) sudo chown $USER:$USER Lib_installatie_Linux.bash
+-3) sudo chmod +x Lib_installatie_Linux.bash
 -4)./Lib installatie Linux.bash
 
 Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycharm)  
