@@ -8,12 +8,26 @@ Steven van der Ham            1785527               steven.vandenham@student.hu.
 
 
 omschrijving van ons doel:
-Een grafische weergave die een inzicht geeft over het gaming gedrag van vrienden op Steam.
+Een grafische weergave geven van statistiek over de games op steam.
 
 Hoe voer je de code uit:
 
--1) Download de files (op: https://github.com/TICT-PV-SG22-20-A/ProjectSteam)
--2) Open de map met files in pycharm
--3) run de file 'main.py'
+-a) Download de files (op: https://github.com/TICT-PV-SG22-20-A/ProjectSteam)
+
+Voor windows:
+-1) Als pip al geïnstalleerd is op uw computer, voer dan de "Lib Installatie Windows.bat" file uit om noodzakelijke libraries te installeren
+
+Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycharm)  
+
+Voor linux:
+-1) geef het bestand uitvoerrechten voor jezelf in de terminal
+-2) sudo chown $USER:$USER Lib installatie Linux.bash
+-3) sudo chmod +x Lib installatie Linux.bash
+-4)./Lib installatie Linux.bash
+
+Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycharm)  
+
+
+-b) run de file 'main.py' in een IDE
 
 
