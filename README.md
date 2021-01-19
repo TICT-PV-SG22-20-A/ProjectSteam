@@ -23,10 +23,12 @@ Voor linux:
 -1) geef het bestand uitvoerrechten voor jezelf in de terminal
 
 type de volgende commands in in uw terminal:
+LET OP: Deze commando's moeten worden uitgevoerd terwijl je in de zelfde map als het script zit.
 
--2)sudo chown $USER:$USER Lib_installatie_Linux.bash
--3)sudo chmod +x Lib_installatie_Linux.bash
--4)./Lib_installatie_Linux.bash
+-2) sudo chown $USER:$USER Lib_installatie_Linux.bash
+-3) sudo chmod +x Lib_installatie_Linux.bash
+Voer nu het script uit:
+-4) ./Lib_installatie_Linux.bash
 
 Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycharm)  
 
