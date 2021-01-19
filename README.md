@@ -15,7 +15,7 @@ Hoe voer je de code uit:
 -a) Download de files (op: https://github.com/TICT-PV-SG22-20-A/ProjectSteam)
 
 Voor windows:
--1) Als pip al geïnstalleerd is op uw computer, voer dan de "Lib Installatie Windows.bat" file uit om noodzakelijke libraries te installeren
+-1) Als pip al op uw computer geïnstalleerd is, voer dan de "Lib Installatie Windows.bat" file uit om noodzakelijke libraries te installeren
 
 Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycharm)  
 
