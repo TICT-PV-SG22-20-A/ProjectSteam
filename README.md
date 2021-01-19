@@ -21,6 +21,9 @@ Alternatief: Installeer de ontbrekende libraries via een IDE (bijvoorbeeld Pycha
 
 Voor linux:
 -1) geef het bestand uitvoerrechten voor jezelf in de terminal
+
+type de volgende commands in in uw terminal:
+
 -2) sudo chown $USER:$USER Lib installatie Linux.bash
 -3) sudo chmod +x Lib installatie Linux.bash
 -4)./Lib installatie Linux.bash
