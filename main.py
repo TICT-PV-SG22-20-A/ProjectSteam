@@ -896,6 +896,7 @@ def fill_dashboard(list):
                 afstand = snelheid_geluid_per_seconde * duratie / 2
                 # Controleert als de afstand onder de 4.5cm is. Als dit zo is worden de charts gereload.
                 if afstand < 4.5:
+                    led_shift()
                     update_pie_info()
                 time.sleep(0.1)
                 
@@ -905,7 +906,6 @@ def fill_dashboard(list):
     # Start aparte threads voor 3 loops van de Raspberry Pi. Op deze manier kunnen de loops lopen terwijl,
     # de rest van de code door kan gaan.
     threading.Thread(target=button_check).start()
-    threading.Thread(target=led_shift).start()
     threading.Thread(target=afstand_sensor).start()
 
 
